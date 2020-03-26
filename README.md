@@ -12,7 +12,7 @@ You have install nvm and npm, and configure correctly in your environment.
 * S3 bucket for storing the audio has been created. The s3 bucket name is formatted as callrecording-<aws region>-<aws account>
 
 ## Deploy with the AWS Amplify CLI
-1. Download package [here](https://github.com/zhizhongk/chime-vc-agentassist)
+1. Download package [here](https://github.com/aws-samples/chime-agent-assist)
 2. Install the package dependency
 ```
 npm install
