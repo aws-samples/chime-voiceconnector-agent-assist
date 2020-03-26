@@ -1,12 +1,12 @@
 # chime-vc-agentassist
 ## Prerequisite
-###Dependency:
+### Dependency:
 You have successfully deployed amazon-chime-voiceconnector-transcription in github. [Github Link](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription)
 
-###Dev Package:
+### Dev Package:
 You have install nvm and npm, and configure correctly in your environment.
 
-###Resource:
+### Resource:
 * A Chime Voice Connector is created. And you have enabled streaming and configured the s3 bucket for Call detail record(CDR).
 * A Dynamodb table is created as amazon-chime-voiceconnector-transcription got deployed. Table is named "TranscriptSegment" And DymamoDB streaming has been enabled for the table.
 * S3 bucket for storing the audio has been created. The s3 bucket name is formatted as callrecording-<aws region>-<aws account>
