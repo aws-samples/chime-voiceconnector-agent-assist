@@ -1,0 +1,12 @@
+{
+    "permissions": {
+        "api": {
+            "chimeagentassist": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        }
+    }
+}

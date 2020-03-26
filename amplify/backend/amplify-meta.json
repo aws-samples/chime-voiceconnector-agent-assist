@@ -1,0 +1,121 @@
+{
+    "providers": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-chime-vc-agentassist-zhizhk-94343-authRole",
+            "UnauthRoleArn": "arn:aws:iam::812207417033:role/amplify-chime-vc-agentassist-zhizhk-94343-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::812207417033:role/amplify-chime-vc-agentassist-zhizhk-94343-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-chime-vc-agentassist-zhizhk-94343-deployment",
+            "UnauthRoleName": "amplify-chime-vc-agentassist-zhizhk-94343-unauthRole",
+            "StackName": "amplify-chime-vc-agentassist-zhizhk-94343",
+            "StackId": "arn:aws:cloudformation:us-east-1:812207417033:stack/amplify-chime-vc-agentassist-zhizhk-94343/d0c4c5a0-5a0e-11ea-b7f7-0a28f59d0ab4",
+            "AmplifyAppId": "d3l7mlly3sse4d"
+        },
+        "categories": {
+            "auth": {
+                "cognitocf0c6096": {}
+            },
+            "function": {
+                "chimevcagentassist76fdc921": {},
+                "chimeagentassist": {}
+            }
+        }
+    },
+    "auth": {
+        "cognitocf0c6096": {
+            "service": "Cognito",
+            "providerPlugin": "awscloudformation",
+            "output": {
+                "AppClientSecret": "7uqoak1fc8423r2507aim28122a4t71m0735devj4k88139n797",
+                "UserPoolId": "us-east-1_zq6pZvzfk",
+                "AppClientIDWeb": "52gqr97qtrc5uhbjjmdbd24hi",
+                "AppClientID": "1l3iseutr9j8t7rsic563o67rm",
+                "IdentityPoolId": "us-east-1:2e705aea-bbc9-4756-a2a0-29b8adae65f7",
+                "IdentityPoolName": "cognitocf0c6096_identitypool_cf0c6096__zhizhk",
+                "UserPoolName": "cognitocf0c6096_userpool_cf0c6096"
+            },
+            "lastPushTimeStamp": "2020-03-05T13:12:36.385Z",
+            "providerMetadata": {
+                "s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-zhizhk-94343-deployment/amplify-cfn-templates/auth/cognitocf0c6096-cloudformation-template.yml",
+                "logicalId": "authcognitocf0c6096"
+            }
+        }
+    },
+    "api": {
+        "chimeagentassist": {
+            "service": "AppSync",
+            "providerPlugin": "awscloudformation",
+            "output": {
+                "authConfig": {
+                    "additionalAuthenticationProviders": [],
+                    "defaultAuthentication": {
+                        "authenticationType": "API_KEY",
+                        "apiKeyConfig": {
+                            "description": "",
+                            "apiKeyExpirationDays": 7
+                        }
+                    }
+                },
+                "GraphQLAPIIdOutput": "3k2564v6djgkvetneysyoa7kwu",
+                "GraphQLAPIEndpointOutput": "https://uexqryg23rh2hdkw7q65st4nfi.appsync-api.us-east-1.amazonaws.com/graphql",
+                "GraphQLAPIKeyOutput": "da2-folixmsrarfszgfntjy4sxvhzu"
+            },
+            "lastPushTimeStamp": "2020-03-05T13:12:36.386Z",
+            "providerMetadata": {
+                "s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-zhizhk-94343-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+                "logicalId": "apichimeagentassist"
+            }
+        }
+    },
+    "hosting": {
+        "S3AndCloudFront": {
+            "service": "S3AndCloudFront",
+            "providerPlugin": "awscloudformation",
+            "output": {
+                "CloudFrontSecureURL": "https://d15bvhwqzc49rf.cloudfront.net",
+                "S3BucketSecureURL": "https://chime-vc-agentassist-20200303170349-hostingbucket-zhizhk.s3.amazonaws.com",
+                "CloudFrontOriginAccessIdentity": "E3IGFA64LNAZ5Z",
+                "WebsiteURL": "http://chime-vc-agentassist-20200303170349-hostingbucket-zhizhk.s3-website-us-east-1.amazonaws.com",
+                "CloudFrontDistributionID": "E2Y4HYXZ0ZJA38",
+                "Region": "us-east-1",
+                "HostingBucketName": "chime-vc-agentassist-20200303170349-hostingbucket-zhizhk",
+                "CloudFrontDomainName": "d15bvhwqzc49rf.cloudfront.net"
+            },
+            "lastPushTimeStamp": "2020-03-05T13:12:36.387Z",
+            "providerMetadata": {
+                "s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-zhizhk-94343-deployment/amplify-cfn-templates/hosting/template.json",
+                "logicalId": "hostingS3AndCloudFront"
+            },
+            "lastPushDirHash": "1h3Gd7D3xqDtEOktAGHBPeAAvGs="
+        }
+    },
+    "function": {
+        "chimevcagentassist76fdc921": {
+            "service": "Lambda",
+            "providerPlugin": "awscloudformation",
+            "build": true,
+            "dependsOn": [
+                {
+                    "category": "api",
+                    "resourceName": "chimeagentassist",
+                    "attributes": [
+                        "GraphQLAPIIdOutput",
+                        "GraphQLAPIEndpointOutput",
+                        "GraphQLAPIKeyOutput"
+                    ]
+                }
+            ],
+            "output": {
+                "Region": "us-east-1",
+                "Arn": "arn:aws:lambda:us-east-1:812207417033:function:chimevcagentassist76fdc921-zhizhk",
+                "Name": "chimevcagentassist76fdc921-zhizhk",
+                "LambdaExecutionRole": "chimevcagentassistLambdaRole658c2b1b-zhizhk"
+            },
+            "lastPushTimeStamp": "2020-03-05T13:12:36.388Z",
+            "providerMetadata": {
+                "s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-zhizhk-94343-deployment/amplify-cfn-templates/function/chimevcagentassist76fdc921-cloudformation-template.json",
+                "logicalId": "functionchimevcagentassist76fdc921"
+            }
+        }
+    }
+}

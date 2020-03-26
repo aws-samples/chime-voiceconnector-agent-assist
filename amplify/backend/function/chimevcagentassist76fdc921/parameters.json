@@ -1,0 +1,4 @@
+{
+    "TranscriptSegmentTableStreamArn": "arn:aws:dynamodb:us-east-1:812207417033:table/TranscriptSegment/stream/2020-02-28T09:48:08.588", 
+    "TranscriptSegmentTableName": "TranscriptSegment"
+}

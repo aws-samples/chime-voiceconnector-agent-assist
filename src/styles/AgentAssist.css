@@ -1,0 +1,157 @@
+table.transcript {
+  text-align: left
+}
+
+table.transcript tbody tr td:first-child {
+    text-align: right
+}
+
+thead.transcript th {
+  text-align: center;
+  padding: 4px;
+  background-color:  var(--squidInk);
+  color: var(--white);
+}
+
+thead.transcript th a {
+    padding: 0em 1em;
+    text-decoration: none;
+  color: var(--white);
+}
+
+table.transcript td {
+  padding: 4px;
+    vertical-align: text-top;
+}
+
+td.transcript-note {
+  text-align: left;
+}
+
+td.transcript-note span.hl {
+  background-color:  wheat
+}
+
+td.s-none {
+}
+
+td.s-plus {
+  background-color: #9f9;
+}
+
+td.s-minus {
+  background-color: #f77;
+}
+
+.modal {
+    margin: 100px auto;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #666;
+    width: 420px;
+    border-radius: 6px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    font-size: 1em;
+    margin: 40vmax 25vmax
+}
+
+.modal ul {
+    padding-inline-start: 20px
+}
+
+.modal h1 { margin-top: 0; font-size: 1.5em }
+
+.modal .close {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 20px;
+    right: 20px;
+    opacity: 0.8;
+    transition: all 200ms;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #777;
+}
+
+.modal .close:hover { opacity: 1; }
+
+.modal .content {
+    min-height: 140px;
+    max-height: 400px;
+    overflow: auto
+}
+
+.modal p {
+    margin: 0 0 1em;
+    text-align: center;
+}
+
+.modal p:last-child { margin: 0; }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    transition: opacity 200ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.overlay .cancel {
+    position: absolute;
+    left: 0;
+    width: 98vmax;
+    height: 98vmax;
+    cursor: default;
+}
+
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+div.modal div.content table tbody tr td {
+    padding: 8px 4px
+}
+
+div.modal div.content table tbody tr td:first-child {
+    vertical-align: text-top;
+    text-align: right;
+    font-weight: bold
+}
+
+div.modal div.content table tbody tr td:nth-child(2) {
+    vertical-align: text-top;
+    padding-left: 5px;
+    text-align: left;
+}
+
+div.modal div.content span.opt {
+    margin: 0px 4px;
+    padding: 3px 3px;
+    background-color: silver;
+    border: 1px solid var(--squidInk);
+    border-radius: 7px;
+}
+
+div.modal div.content span.opt:hover { cursor: pointer; }
+
+a.action {
+    padding: 3px;
+    text-decoration: none;
+    color: var(--button-color);
+    background-color: var(--button-background-color);
+    border-radius: 3px;
+}
+
+a.action:hover {
+    padding: 3px;
+    background-color: var(--button-click);
+    border-radius: 3px;
+}
