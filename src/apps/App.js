@@ -7,7 +7,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import { getAWSAccountId } from '../utils/sts';
-import logo from '../styles/icon/amazon-chime.svg';
 import '../styles/App.css';
 import AgentAssist from '../agentAssist/AgentAssist';
 import HistorySearch from '../search/HistorySearch';
@@ -40,7 +39,6 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Agent Assist (Chime Vx)</h1>
         </header>
         <br />
