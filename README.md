@@ -1,6 +1,6 @@
-# Chime Agent Assist
+# AI-powered Speech Analytics with Amazon Chime Voice Connector
 
-Making it easy to get started with Amazon Chime Voice Connector live audio streaming and real-time transcription using Amazon Transcribe.
+Making it easy to get started with Amazon Chime Voice Connector live audio streaming to build a AI-powered Speech Analytics using Amazon Transcribe, Amazon Comprehend and AWS Elastic Search. This example builds on top of previously released [AI-powered real-time transcriptions with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) and create a solution to help care site agents in their typical workflows.
 
 ## On this Page
 - [Project Overview](#project-overview)
@@ -9,17 +9,15 @@ Making it easy to get started with Amazon Chime Voice Connector live audio strea
 
 ## Project Overview
 
-This project provides frontend user interface for [Amazon Chime Voice Connector Transcription](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription). Also it integrates with Elastic Search service to allow agents to collect, search and analyze the transcription and call metadata.
+This project provides a frontend user interface to view call trasncritps, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru previous trancritps using keywords or call metadata like To, From and Call-Ids etc.
 
 The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the keyobject and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
 
 ## Architecture Overview
-### Search
-![](images/search-overview.png)
-### Active call
-![](images/activecall-overview.png)
+![](images/Agent-Assist.svg)
+
 ### Description
-Chime Agent Assist consists of two parts. Search provides our agents with a  access to transcription, metadata, call detail records, etc and allows agents to retrieve the information in need. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from cloudwatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
+Chime Agent Assist consists of two parts. Search provides agents with access to previous transcriptions, metadata, call detail records, etc and allows agents to search thru th information. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from cloudwatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
 
 Active call enables agents to track the call transcription, capture the key object and customer's sentiment in real time. This is accomplished by a frontend subscribing to AppSync and a Lambda function triggered by new transcription record. AppSync, after receiving the Lambda request, will return the new transcription to the frontend.
 
