@@ -1,6 +1,6 @@
 # AI-powered Speech Analytics with Amazon Chime Voice Connector
 
-Making it easy to get started with Amazon Chime Voice Connector live audio streaming to build a AI-powered Speech Analytics using Amazon Transcribe, Amazon Comprehend and AWS Elastic Search. This example builds on top of previously released [AI-powered real-time transcriptions with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) and create a solution to help care site agents in their typical workflows.
+Making it easy to get started with Amazon Chime Voice Connector live audio streaming to build a AI-powered Speech Analytics using Amazon Transcribe, Amazon Comprehend and AWS Elastic Search. This example builds on top of previously released [Real-time transcription with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) and create a solution to help care site agents in their typical workflows.
 
 ## On this Page
 - [Project Overview](#project-overview)
