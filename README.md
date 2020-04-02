@@ -35,12 +35,11 @@ Once your deployment is complete, you can test by making calls through your Amaz
 This step will provide a detailed steps on how to deploy the project.
 
 ### Prerequisite
-- Successfully deployed [amazon-chime-voiceconnector-transcription]((https://github.com/aws-samples/amazon-chime-voiceconnector-transcription)) in you AWS account.
-- Install [nvm](https://github.com/nvm-sh/nvm) and [npm](https://www.npmjs.com/get-npm), and configure correctly in your environment.
-- Install Amplify Cli. [Documentation](https://aws-amplify.github.io/docs/)
-- (Optional) Install yarn. [Install instruction](https://classic.yarnpkg.com/en/docs/install)
-- Enable DynamoDB table streaming for the transcription table named `TranscriptSegment`. Note: choose StreamViewType as `NEW_IMAGE` or `NEW_AND_
-OLD_IMAGES`. [Documentation on enabling streaming](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html#Streams.Enabling)
+- Install and configure [nvm](https://github.com/nvm-sh/nvm) and [npm](https://www.npmjs.com/get-npm)
+- Follow [steps](https://aws-amplify.github.io/docs/) to install Amplify CLI
+- (Optional) Install yarn following these [steps](https://classic.yarnpkg.com/en/docs/install)
+- [Real-time transcription with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) is deployed in the AWS account
+  - Follow [steps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html#Streams.Enabling) to enable stream on `TranscriptSegment` table, this is the table where transcritpions are stored. Choose `NEW_IMAGE` or `NEW_AND_OLD_IMAGES` for StreamViewType
 
 ### Deploy with the AWS Amplify CLI
 
