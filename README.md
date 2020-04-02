@@ -14,7 +14,7 @@ This project provides a frontend user interface to view call trasncritps, custom
 The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the keyobject and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
 
 ## Architecture Overview
-![](images/Agent-Assist.svg)
+![](images/agent-assist.svg)
 
 ### Description
 Chime Agent Assist consists of two parts. Search provides agents with access to previous transcriptions, metadata, call detail records, etc and allows agents to search thru th information. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from cloudwatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
