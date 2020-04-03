@@ -46,7 +46,7 @@ This step will provide a detailed steps on how to deploy the project.
 Download instruction:
 
 1. [Download](https://github.com/aws-samples/chime-agent-assist) repository in your workspace.
-2. Install the package dependency
+2. Install all dependency for this project
 
     ```
     npm install
@@ -54,7 +54,7 @@ Download instruction:
     or
 
     ```
-    yarn
+    yarn install
     ```
 3. Configure Amplify
 
@@ -66,12 +66,12 @@ Download instruction:
     ```
     amplify init
     ```
-5. Add DynamoDB streaming ARN in the configuration. Please replace `<replace_with_your_streaming_arn>` with the streaming arn in [Prerequisite](#prerequisite).
+5. Add DynamoDB table stream ARN to the configuration. Please replace `<transcriptSegment_stream_arn>` with the `TranscriptSegment` table stream arn
 
     ```
     cat > ./amplify/backend/function/chimevcagentassist76fdc921/parameters.json << EOF
     {
-     "TranscriptSegmentTableStreamArn": "<replace_with_your_streaming_arn>",
+     "TranscriptSegmentTableStreamArn": "<transcriptSegment_stream_arn>",
      "TranscriptSegmentTableName": "TranscriptSegment"
     }
     EOF
