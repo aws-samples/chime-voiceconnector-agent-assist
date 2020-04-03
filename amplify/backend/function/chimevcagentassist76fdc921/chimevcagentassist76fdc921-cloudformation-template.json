@@ -1,0 +1,413 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Lambda resource stack creation using Amplify CLI",
+	"Parameters": {
+		"env": {
+			"Type": "String"
+		},
+		"apichimeagentassistGraphQLAPIIdOutput": {
+			"Type": "String",
+			"Default": "apichimeagentassistGraphQLAPIIdOutput"
+		},
+		"apichimeagentassistGraphQLAPIEndpointOutput": {
+			"Type": "String",
+			"Default": "apichimeagentassistGraphQLAPIEndpointOutput"
+		},
+		"apichimeagentassistGraphQLAPIKeyOutput": {
+			"Type": "String",
+			"Default": "apichimeagentassistGraphQLAPIKeyOutput"
+		},
+		"TranscriptSegmentTableName": {
+			"Type": "String",
+			"Description": "The logical id of Transcript segment table."
+		}
+	},
+	"Conditions": {
+		"ShouldNotCreateEnvResources": {
+			"Fn::Equals": [
+				{
+					"Ref": "env"
+				},
+				"NONE"
+			]
+		}
+	},
+	"Resources": {
+    "FetchStreamArnFunction": {
+      "Properties": {
+        "Code": {
+          "ZipFile": {
+            "Fn::Join": [
+              "\n",
+              [
+                  "const AWS = require('aws-sdk');",
+                  "const response = require('cfn-response');",
+                  "exports.handler = function (event, context) {",
+                  "    try {",
+                  "        const tableName = event.ResourceProperties.TableName;",
+                  "        console.log(JSON.stringify(event));",
+                  "        const params = { TableName: tableName}",
+                  "        const dynamodb = new AWS.DynamoDB();",
+                  "        const promise = dynamodb.describeTable(params).promise()",
+                  "        .then(data => {",
+                  "                console.log(JSON.stringify(data));",
+                  "                if(data.Table.LatestStreamArn === undefined) {",
+                  "                    const streamingParams = { ",
+                  "                        TableName: tableName, ",
+                  "                        StreamSpecification: {",
+                  "                            StreamEnabled: true,",
+                  "                            StreamViewType: 'NEW_IMAGE'",
+                  "                        }",
+                  "                    };",
+                  "                    const update = dynamodb.updateTable(streamingParams).promise()",
+                  "                    .then(data => {",
+                  "                        console.log('update table result ', data);",
+                  "                        response.send(event, context, response.SUCCESS, { StreamArn: data.Table.LatestStreamArn });",
+                  "                    }, err => {",
+                  "                        console.log(err.stack);",
+                  "                        let responseData = {Error: err};",
+                  "                        response.send(event, context, response.FAILED, responseData);",
+                  "                        throw err;",
+                  "                    });",
+                  "                } else {",
+                  "                    response.send(event, context, response.SUCCESS, { StreamArn: data.Table.LatestStreamArn });",
+                  "                }",
+                  "            }, err => {",
+                  "                console.log(err.stack);",
+                  "                let responseData = {Error: err};",
+                  "                response.send(event, context, response.FAILED, responseData);",
+                  "                throw err;",
+                  "            });",
+                  "    } catch(err) {",
+                  "        console.log(err.stack);",
+                  "        let responseData = {Error: err};",
+                  "        response.send(event, context, response.FAILED, responseData);",
+                  "        throw err;",
+                  "    }",
+                  "};"
+              ]
+            ]
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "FetchStreamArnFunctionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": "300"
+      },
+      "Type": "AWS::Lambda::Function"
+    },
+    "FetchStreamArnFunctionOutput": {
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "FetchStreamArnFunction",
+            "Arn"
+          ]
+        },
+        "TableName": {
+          "Ref": "TranscriptSegmentTableName"
+        }
+      },
+      "Type": "Custom::LambdaCallout"
+    },
+    "FetchStreamArnFunctionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+		"LambdaFunction": {
+			"Type": "AWS::Lambda::Function",
+			"Metadata": {
+				"aws:asset:path": "./src",
+				"aws:asset:property": "Code"
+			},
+			"Properties": {
+				"Handler": "index.handler",
+				"FunctionName": {
+					"Fn::If": [
+						"ShouldNotCreateEnvResources",
+						"chimevcagentassist76fdc921",
+						{
+							"Fn::Join": [
+								"",
+								[
+									"chimevcagentassist76fdc921",
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					]
+				},
+				"Environment": {
+					"Variables": {
+						"ENV": {
+							"Ref": "env"
+						},
+						"REGION": {
+							"Ref": "AWS::Region"
+						},
+						"API_CHIMEAGENTASSIST_GRAPHQLAPIIDOUTPUT": {
+							"Ref": "apichimeagentassistGraphQLAPIIdOutput"
+						},
+						"API_CHIMEAGENTASSIST_GRAPHQLAPIENDPOINTOUTPUT": {
+							"Ref": "apichimeagentassistGraphQLAPIEndpointOutput"
+						},
+						"API_KEY": {
+							"Ref": "apichimeagentassistGraphQLAPIKeyOutput"
+						}
+					}
+				},
+				"Role": {
+					"Fn::GetAtt": [
+						"LambdaExecutionRole",
+						"Arn"
+					]
+				},
+				"Runtime": "nodejs10.x",
+				"Timeout": "25",
+				"Code": {
+					"S3Bucket": "amplify-chime-vc-agentassist-zhizhk-94343-deployment",
+					"S3Key": "amplify-builds/chimevcagentassist76fdc921-4d57446a66306b447333-build.zip"
+				}
+			}
+		},
+		"LambdaExecutionRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": {
+					"Fn::If": [
+						"ShouldNotCreateEnvResources",
+						"chimevcagentassistLambdaRole658c2b1b",
+						{
+							"Fn::Join": [
+								"",
+								[
+									"chimevcagentassistLambdaRole658c2b1b",
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					]
+				},
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Principal": {
+								"Service": [
+									"lambda.amazonaws.com"
+								]
+							},
+							"Action": [
+								"sts:AssumeRole"
+							]
+						}
+					]
+				}
+			}
+		},
+		"lambdaexecutionpolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"logs:CreateLogGroup",
+								"logs:CreateLogStream",
+								"logs:PutLogEvents"
+							],
+							"Resource": {
+								"Fn::Sub": [
+									"arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*",
+									{
+										"region": {
+											"Ref": "AWS::Region"
+										},
+										"account": {
+											"Ref": "AWS::AccountId"
+										},
+										"lambda": {
+											"Ref": "LambdaFunction"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"AmplifyResourcesPolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "amplify-lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"appsync:Create*",
+								"appsync:StartSchemaCreation",
+								"appsync:GraphQL",
+								"appsync:Get*",
+								"appsync:List*",
+								"appsync:Update*",
+								"appsync:Delete*"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:appsync:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":apis/",
+											{
+												"Ref": "apichimeagentassistGraphQLAPIIdOutput"
+											},
+											"/*"
+										]
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"DynamoDBStreamPolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "dynamodb_stream_policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:GetRecords",
+								"dynamodb:GetShardIterator",
+								"dynamodb:DescribeStream",
+								"dynamodb:ListStreams"
+							],
+							"Resource": {
+								"Fn::Sub": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TranscriptSegmentTableName}/stream/*"
+							}
+						}
+					]
+				}
+			}
+		},
+		"DynamoDBEventSourceMappingLambda": {
+			"Type": "AWS::Lambda::EventSourceMapping",
+			"DependsOn": [
+				"LambdaFunction",
+				"DynamoDBStreamPolicy",
+				"AmplifyResourcesPolicy",
+				"lambdaexecutionpolicy"
+			],
+			"Properties": {
+				"Enabled": true,
+				"EventSourceArn": {
+					"Fn::GetAtt": ["FetchStreamArnFunctionOutput", "StreamArn"]
+				},
+				"FunctionName": {
+					"Ref": "LambdaFunction"
+				},
+				"StartingPosition": "LATEST"
+			}
+		}
+	},
+	"Outputs": {
+		"Name": {
+			"Value": {
+				"Ref": "LambdaFunction"
+			}
+		},
+		"Arn": {
+			"Value": {
+				"Fn::GetAtt": [
+					"LambdaFunction",
+					"Arn"
+				]
+			}
+		},
+		"Region": {
+			"Value": {
+				"Ref": "AWS::Region"
+			}
+		},
+		"LambdaExecutionRole": {
+			"Value": {
+				"Ref": "LambdaExecutionRole"
+			}
+		}
+	}
+}

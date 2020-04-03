@@ -1,0 +1,106 @@
+type Mutation {
+  announceCreateTranscriptSegment(input: CreateTranscriptSegmentInput!): TranscriptSegment
+  createTranscriptSegment(input: CreateTranscriptSegmentInput!): TranscriptSegment
+  deleteTranscriptSegment(input: DeleteTranscriptSegmentInput!): TranscriptSegment
+  updateTranscriptSegment(input: UpdateTranscriptSegmentInput!): TranscriptSegment
+}
+
+type Query @aws_api_key @aws_cognito_user_pools {
+  getTranscriptSegment(CallId: String!, StartTime: Float!): TranscriptSegment
+  listTranscriptSegments(filter: TableTranscriptSegmentFilterInput, limit: Int, nextToken: String): TranscriptSegmentConnection
+}
+
+type Subscription @aws_api_key @aws_cognito_user_pools {
+  onAnnounceCreateTranscriptSegment(input: CreateTranscriptSegmentInput): TranscriptSegment @aws_subscribe(mutations: ["announceCreateTranscriptSegment"])
+  onCreateTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations: ["createTranscriptSegment"])
+  onDeleteTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations: ["deleteTranscriptSegment"])
+  onUpdateTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations: ["updateTranscriptSegment"])
+}
+
+type TranscriptSegment @aws_api_key @aws_cognito_user_pools {
+  CallId: String!
+  EndTime: Float
+  LoggedOn: String
+  Speaker: String
+  StartTime: Float!
+  Transcript: String
+}
+
+type TranscriptSegmentConnection @aws_api_key @aws_cognito_user_pools {
+  items: [TranscriptSegment]
+  nextToken: String
+}
+
+input CreateTranscriptSegmentInput {
+  CallId: String!
+  EndTime: Float
+  LoggedOn: String
+  Speaker: String
+  StartTime: Float!
+  Transcript: String
+}
+
+input DeleteTranscriptSegmentInput {
+  CallId: String!
+  StartTime: Float!
+}
+
+input TableFloatFilterInput {
+  between: [Float]
+  contains: Float
+  eq: Float
+  ge: Float
+  gt: Float
+  le: Float
+  lt: Float
+  ne: Float
+  notContains: Float
+}
+
+input TableIDFilterInput {
+  beginsWith: ID
+  between: [ID]
+  contains: ID
+  eq: ID
+  ge: ID
+  gt: ID
+  le: ID
+  lt: ID
+  ne: ID
+  notContains: ID
+}
+
+input TableIntFilterInput {
+  between: [Int]
+  contains: Int
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+  notContains: Int
+}
+
+input TableStringFilterInput {
+  beginsWith: String
+  between: [String]
+  contains: String
+  eq: String
+  ge: String
+  gt: String
+  le: String
+  lt: String
+  ne: String
+  notContains: String
+}
+
+input TableTranscriptSegmentFilterInput {
+  CallId: TableStringFilterInput
+  StartTime: TableIntFilterInput
+}
+
+input UpdateTranscriptSegmentInput {
+  CallId: String!
+  StartTime: Float!
+}

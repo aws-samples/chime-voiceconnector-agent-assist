@@ -1,0 +1,496 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Resources to process Chime Voice Connector audio from KVS, transcribe, and save output to DynamoDB table",
+  "Resources": {
+    "CDRStreamingExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "RetrieveMergedAudioUrlExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "ElasticSearchLambdaExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "MetadataStreamingExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "S3AudioStreamingExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "TranscriptToESExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "LogPublishPolicy": {
+      "DependsOn": [
+        "ElasticSearchLambdaExecutionRole",
+        "CDRStreamingExecutionRole",
+        "S3AudioStreamingExecutionRole",
+        "MetadataStreamingExecutionRole",
+        "RetrieveMergedAudioUrlExecutionRole",
+        "TranscriptToESExecutionRole"
+      ],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "ElasticSearchLambdaExecutionRole"
+          },
+          {
+            "Ref": "CDRStreamingExecutionRole"
+          },
+          {
+            "Ref": "S3AudioStreamingExecutionRole"
+          },
+          {
+            "Ref": "MetadataStreamingExecutionRole"
+          },
+          {
+            "Ref": "RetrieveMergedAudioUrlExecutionRole"
+          },
+          {
+            "Ref": "TranscriptToESExecutionRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Policy"
+    },
+    "ElasticsearchDomain": {
+      "DependsOn": [
+        "ElasticSearchLambdaExecutionRole",
+        "CDRStreamingExecutionRole",
+        "S3AudioStreamingExecutionRole",
+        "MetadataStreamingExecutionRole",
+        "TranscriptToESExecutionRole"
+      ],
+      "Properties": {
+        "AccessPolicies": {
+          "Statement": [
+            {
+              "Action": "es:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "ElasticSearchLambdaExecutionRole",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
+              }
+            },
+            {
+              "Action": "es:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CDRStreamingExecutionRole",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
+              }
+            },
+            {
+              "Action": "es:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "MetadataStreamingExecutionRole",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
+              }
+            },
+            {
+              "Action": "es:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "S3AudioStreamingExecutionRole",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
+              }
+            },
+            {
+              "Action": "es:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "TranscriptToESExecutionRole",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "AdvancedOptions": {
+          "rest.action.multi.allow_explicit_index": "true"
+        },
+        "DomainName": "search",
+        "EBSOptions": {
+          "EBSEnabled": "true",
+          "Iops": 0,
+          "VolumeSize": 10,
+          "VolumeType": "standard"
+        },
+        "ElasticsearchClusterConfig": {
+          "InstanceCount": "1",
+          "InstanceType": "r5.large.elasticsearch"
+        },
+        "ElasticsearchVersion": "7.1",
+        "SnapshotOptions": {
+          "AutomatedSnapshotStartHour": "0"
+        }
+      },
+      "Type": "AWS::Elasticsearch::Domain"
+    },
+    "MetadataStreamingLambdaFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/metadataStreamingLambdaFunction.zip",
+        "Environment": {
+          "Variables": {
+            "ES_ENDPOINT": {
+              "Fn::GetAtt": [
+                "ElasticsearchDomain",
+                "DomainEndpoint"
+              ]
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "MetadataStreamingExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 3,
+        "Events": {
+            "CWEvent": {
+                "Type": "CloudWatchEvent",
+                "Properties": {
+                  "Pattern": {
+                      "source": [
+                          "aws.chime"
+                      ],
+                      "detail-type": [
+                        "Chime VoiceConnector Streaming Status"
+                      ]
+                  },
+                }
+            }
+        }
+      },
+      "Type": "AWS::Serverless::Function"
+    },
+    "RetrieveMergedAudioUrlFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/retrieveMergedAudioUrl.zip",
+        "FunctionName": "chime-retrieve-merged-audio-url",
+        "Handler": "lambda_function.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "RetrieveMergedAudioUrlExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.8",
+        "Timeout": 10,
+        "MemorySize": 1024
+      },
+      "Type": "AWS::Serverless::Function"
+    },
+    "S3AudioStreamingLambdaFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/s3AudioStreamingLambdaFunction.zip",
+        "Environment": {
+          "Variables": {
+            "ES_ENDPOINT": {
+              "Fn::GetAtt": [
+                "ElasticsearchDomain",
+                "DomainEndpoint"
+              ]
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "S3AudioStreamingExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 3,
+        "FunctionName": "chime-s3-audio-streaming"
+      },
+      "Type": "AWS::Serverless::Function"
+    },
+    "SearchLambdaFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/searchLambdaFunction.zip",
+        "Environment": {
+          "Variables": {
+            "ES_ENDPOINT": {
+              "Fn::GetAtt": [
+                "ElasticsearchDomain",
+                "DomainEndpoint"
+              ]
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            }
+          }
+        },
+        "FunctionName": "chime-search-transcript-and-audio",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "ElasticSearchLambdaExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 3
+      },
+      "Type": "AWS::Serverless::Function"
+    },
+    "CDRStreamingLambdaFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/cdrStreamingLambdaFunction.zip",
+        "Environment": {
+          "Variables": {
+            "ES_ENDPOINT": {
+              "Fn::GetAtt": [
+                "ElasticsearchDomain",
+                "DomainEndpoint"
+              ]
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "CDRStreamingExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 3,
+        "FunctionName": "chime-cdr-streaming"
+      },
+      "Type": "AWS::Serverless::Function"
+    },
+    "TranscriptToESLambdaFunction": {
+      "Properties": {
+        "CodeUri": "./function/build/transcriptToESFunction.zip",
+        "Environment": {
+          "Variables": {
+            "ES_ENDPOINT": {
+              "Fn::GetAtt": [
+                "ElasticsearchDomain",
+                "DomainEndpoint"
+              ]
+            },
+            "REGION": {
+              "Ref": "AWS::Region"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "TranscriptToESExecutionRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 3,
+        "Events": {
+            "CWEvent": {
+                "Type": "CloudWatchEvent",
+                "Properties": {
+                  "Pattern": {
+                      "source": [
+                          "aws.chime"
+                      ],
+                      "detail-type": [
+                        "Chime VoiceConnector Streaming Status"
+                      ]
+                  },
+                }
+            }
+        }
+      },
+      "Type": "AWS::Serverless::Function"
+    }
+  },
+  "Transform": "AWS::Serverless-2016-10-31"
+}
