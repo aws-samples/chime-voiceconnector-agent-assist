@@ -9,7 +9,7 @@ Making it easy to get started with Amazon Chime Voice Connector live audio strea
 
 ## Project Overview
 
-This project provides a frontend user interface to view call transcripts, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru previous transcripts using keywords or call metadata like To, From and Call-Ids etc.
+This project provides a frontend user interface to view call transcripts, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru old transcripts using keywords or call metadata like To, From and Call-Ids etc.
 
 The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the key object and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
 
@@ -17,12 +17,12 @@ The frontend user interface is comprised of two parts: Active call and search. I
 ![](images/agent-assist.svg)
 
 ### Description
-Chime Agent Assist consists of two parts. Search provides agents with access to previous transcriptions, metadata, call detail records, etc and allows agents to search thru th information. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from cloudwatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
+Chime Agent Assist consists of two parts. Search provides agents with access to old transcripts, metadata, call detail records, etc and allows agents to search thru th information. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from CloudWatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
 
 Active call enables agents to track the call transcription, capture the key object and customer's sentiment in real time. This is accomplished by a frontend subscribing to AppSync and a Lambda function triggered by new transcription record. AppSync, after receiving the Lambda request, will return the new transcription to the frontend.
 
 ## Getting Started
-Getting started with this project is easy. This can be accomplished by using the Amplify deployment and cloudformation instructions below:
+Getting started with this project is easy. This can be accomplished by using the Amplify deployment and CloudFormation instructions below:
 
 ### Easy Setup
 
@@ -39,7 +39,7 @@ This step will provide a detailed steps on how to deploy the project.
 - Follow [steps](https://aws-amplify.github.io/docs/) to install Amplify CLI
 - (Optional) Install yarn following these [steps](https://classic.yarnpkg.com/en/docs/install)
 - [Real-time transcription with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) is deployed in the AWS account
-  - Follow [steps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html#Streams.Enabling) to enable stream on `TranscriptSegment` table, this is the table where transcritpions are stored. Choose `NEW_IMAGE` or `NEW_AND_OLD_IMAGES` for StreamViewType
+  - Follow [steps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html#Streams.Enabling) to enable stream on `TranscriptSegment` table, this is the table where transcripts are stored. Choose `NEW_IMAGE` or `NEW_AND_OLD_IMAGES` for StreamViewType
 
 ### Deploy with the AWS Amplify CLI
 
