@@ -9,9 +9,9 @@ Making it easy to get started with Amazon Chime Voice Connector live audio strea
 
 ## Project Overview
 
-This project provides a frontend user interface to view call trasncritps, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru previous trancritps using keywords or call metadata like To, From and Call-Ids etc.
+This project provides a frontend user interface to view call transcripts, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru previous transcripts using keywords or call metadata like To, From and Call-Ids etc.
 
-The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the keyobject and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
+The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the key object and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
 
 ## Architecture Overview
 ![](images/agent-assist.svg)
