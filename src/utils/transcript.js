@@ -78,9 +78,9 @@ export function mergeAndComprehendTranscript(segments) {
 
 export function mergeTranscript(segments) {
   segments.sort(function(a, b) {
-    if (a.CallId < b.CallId) {
+    if (a.TransactionId < b.TransactionId) {
       return -1;
-    } else if (a.CallId > b.CallId) {
+    } else if (a.TransactionId > b.TransactionId) {
       return 1;
     } else {
       return a.LoggedOn - b.LoggedOn;

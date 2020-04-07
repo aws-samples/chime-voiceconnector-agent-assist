@@ -18,7 +18,7 @@ import moment from 'moment/moment';
 import {
   getSignedUrl,
   retrieveBucketAndKey,
-  retrieveTranscriptForCallId,
+  retrieveTranscriptForTransactionId,
 } from '../utils/elasticsearch';
 import { mergeTranscript } from '../utils/transcript';
 import { getMergedAudioURL } from '../utils/audio';
@@ -36,7 +36,7 @@ class StreamingRecord extends React.Component {
   }
 
   updateTranscript() {
-    retrieveTranscriptForCallId(this.state.metadata.TransactionId).then(segments => {
+    retrieveTranscriptForTransactionId(this.state.metadata.TransactionId).then(segments => {
       this.setState({ transcript: mergeTranscript(segments) });
     });
   }

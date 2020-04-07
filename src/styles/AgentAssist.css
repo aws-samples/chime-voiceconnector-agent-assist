@@ -49,11 +49,9 @@ td.s-minus {
     padding: 20px;
     background: #fff;
     border: 1px solid #666;
-    width: 420px;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
     position: relative;
     font-size: 1em;
-    left: 35%;
     top: 50%;
 }
 

@@ -19,7 +19,7 @@ const readTranscript = `
 query listTranscriptSegments($nextToken: String = "") {
     listTranscriptSegments(nextToken: $nextToken) {
         items {
-            CallId
+            TransactionId
                 StartTime
                 Speaker
                 EndTime
@@ -33,7 +33,7 @@ query listTranscriptSegments($nextToken: String = "") {
 
 const anncTranscript = `subscription {
     onAnnounceCreateTranscriptSegment {
-        CallId
+        TransactionId
             StartTime
             Speaker
             EndTime
@@ -108,9 +108,11 @@ class AgentAssist extends React.Component {
         (acc, curr) => (acc !== null && acc.LoggedOn > curr.LoggedOn ? acc : curr),
         null
       );
-      const currentCallId = latestCall === null ? null : latestCall.CallId;
+      const currentTransactionId = latestCall === null ? null : latestCall.TransactionId;
       data = [].concat(
-        this.state.transcript.filter(e => e.CallId === currentCallId && e.EndTime !== null)
+        this.state.transcript.filter(
+          e => e.TransactionId === currentTransactionId && e.EndTime !== null
+        )
       );
       data = mergeAndComprehendTranscript(data).map((item, i) => (
         <tr key={i}>

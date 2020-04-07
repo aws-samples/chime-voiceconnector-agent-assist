@@ -14,7 +14,7 @@ type Mutation {
 
 #  API_KEY is our default authorization, so allow Cognito User Pools to also access Query
 type Query @aws_api_key @aws_cognito_user_pools {
-  getTranscriptSegment(CallId: String!, StartTime: Float!): TranscriptSegment
+  getTranscriptSegment(TransactionId: String!, StartTime: Float!): TranscriptSegment
   listTranscriptSegments(filter: TableTranscriptSegmentFilterInput, limit: Int, nextToken: String): TranscriptSegmentConnection
 }
 
@@ -22,16 +22,17 @@ type Query @aws_api_key @aws_cognito_user_pools {
 type Subscription @aws_api_key @aws_cognito_user_pools {
   #  Mutation used to announce a record (should be associated with the Announcements/None Resolver)
   onAnnounceCreateTranscriptSegment(input: CreateTranscriptSegmentInput): TranscriptSegment @aws_subscribe(mutations : ["announceCreateTranscriptSegment"])
-  onCreateTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["createTranscriptSegment"])
-  onDeleteTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["deleteTranscriptSegment"])
-  onUpdateTranscriptSegment(CallId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["updateTranscriptSegment"])
+  onCreateTranscriptSegment(TransactionId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["createTranscriptSegment"])
+  onDeleteTranscriptSegment(TransactionId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["deleteTranscriptSegment"])
+  onUpdateTranscriptSegment(TransactionId: String, StartTime: Float): TranscriptSegment @aws_subscribe(mutations : ["updateTranscriptSegment"])
 }
 
 #  API_KEY is our default authorization, so allow Cognito User Pools to also access TranscriptSegment
 # Object type that represents objects stored in the Amazon DynamoDB table named: TranscriptSegment.
 type TranscriptSegment @aws_api_key @aws_cognito_user_pools {
   #  Key attributes. Changing these may result in unexpected behavior.
-  CallId: String!
+  TransactionId: String!
+  CallId: String
   EndTime: Float
   LoggedOn: String
   #  other attributes
@@ -47,7 +48,8 @@ type TranscriptSegmentConnection @aws_api_key @aws_cognito_user_pools {
 }
 
 input CreateTranscriptSegmentInput {
-  CallId: String!
+  TransactionId: String!
+  CallId: String
   EndTime: Float
   LoggedOn: String
   Speaker: String
@@ -56,7 +58,7 @@ input CreateTranscriptSegmentInput {
 }
 
 input DeleteTranscriptSegmentInput {
-  CallId: String!
+  TransactionId: String!
   StartTime: Float!
 }
 
@@ -111,11 +113,11 @@ input TableStringFilterInput {
 }
 
 input TableTranscriptSegmentFilterInput {
-  CallId: TableStringFilterInput
+  TransactionId: TableStringFilterInput
   StartTime: TableIntFilterInput
 }
 
 input UpdateTranscriptSegmentInput {
-  CallId: String!
+  TransactionId: String!
   StartTime: Float!
 }

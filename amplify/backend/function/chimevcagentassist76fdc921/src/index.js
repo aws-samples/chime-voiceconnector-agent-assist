@@ -61,40 +61,43 @@ exports.handler = (event, context, callback) => {
     event.Records.forEach((record) => {
         if (record.eventName === 'INSERT') {
             console.log('record ... ');
-            let callId = record.dynamodb.NewImage.CallId.S,
+            let transactionId = record.dynamodb.NewImage.TransactionId.S,
                 startTime = parseFloat(record.dynamodb.NewImage.StartTime.N),
                 transcript = record.dynamodb.NewImage.Transcript.S,
-                loggedOn = record.dynamodb.NewImage.LoggedOn.S;
+                loggedOn = record.dynamodb.NewImage.LoggedOn.S,
+                callId = record.dynamodb.NewImage.CallId.S;
             let endTime = (record.dynamodb.NewImage.EndTime) ? parseFloat(record.dynamodb.NewImage.EndTime.N) : null;
             let speaker = (record.dynamodb.NewImage.Speaker) ? record.dynamodb.NewImage.Speaker.S : null;
             let announceAddTranscriptSegment = endTime ?
             `mutation announceAddTranscriptSegment {
               announceCreateTranscriptSegment
               (input: {
-                CallId: "${callId}"
+                TransactionId: "${transactionId}"
                 StartTime: ${startTime}
                 Speaker: "${speaker}"
                 EndTime: ${endTime}
                 Transcript: "${transcript}"
                 LoggedOn: "${loggedOn}"
+                CallId: "${callId}"
               }) {
-                CallId
+                TransactionId
                 StartTime
                 Speaker
                 EndTime
                 Transcript
                 LoggedOn
+                CallId
               }
             }` :
             `mutation announceAddTranscriptSegment {
               announceCreateTranscriptSegment
               (input: {
-                CallId: "${callId}"
+                TransactionId: "${transactionId}"
                 StartTime: ${startTime}
                 Transcript: "${transcript}"
                 LoggedOn: "${loggedOn}"
               }) {
-                CallId
+                TransactionId
                 StartTime
                 Transcript
                 LoggedOn

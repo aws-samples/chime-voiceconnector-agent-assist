@@ -19,7 +19,7 @@ exports.handler = function (event, context) {
     const transactionId = detail.transactionId;
 
     if(detail.streamingStatus === 'ENDED') {
-      retrieveTranscriptForCallId(transactionId).then(segments => {
+      retrieveTranscriptForTransactionId(transactionId).then(segments => {
         const doc = {
           "Transcript": mergeTranscript(segments),
           "TransactionId": transactionId,
@@ -60,17 +60,17 @@ function postDocumentToES(doc, id, context) {
         });
     });
 }
-function retrieveTranscriptForCallId(callid) {
+function retrieveTranscriptForTransactionId(transactionId) {
     const ddb = new AWS.DynamoDB.DocumentClient();
 
     const params = {
       TableName: 'TranscriptSegment',
       KeyConditionExpression: '#id = :id',
       ExpressionAttributeNames: {
-        '#id': 'CallId',
+        '#id': 'TransactionId',
       },
       ExpressionAttributeValues: {
-        ':id': callid,
+        ':id': transactionId,
       },
     };
 
@@ -87,9 +87,9 @@ function retrieveTranscriptForCallId(callid) {
 }
 function mergeTranscript(segments) {
   segments.sort(function(a, b) {
-    if (a.CallId < b.CallId) {
+    if (a.TransactionId < b.TransactionId) {
       return -1;
-    } else if (a.CallId > b.CallId) {
+    } else if (a.TransactionId > b.TransactionId) {
       return 1;
     } else {
       return a.LoggedOn - b.LoggedOn;

@@ -73,7 +73,7 @@ export function retrieveBucketAndKey(transactionid) {
   });
 }
 
-export function retrieveTranscriptForCallId(callid) {
+export function retrieveTranscriptForTransactionId(transactionId) {
   return Auth.currentCredentials().then(creds => {
     const ddb = new AWS.DynamoDB.DocumentClient({
       region: defaultRegion,
@@ -84,10 +84,10 @@ export function retrieveTranscriptForCallId(callid) {
       TableName: config.transcriptTableName,
       KeyConditionExpression: '#id = :id',
       ExpressionAttributeNames: {
-        '#id': 'CallId',
+        '#id': 'TransactionId',
       },
       ExpressionAttributeValues: {
-        ':id': callid,
+        ':id': transactionId,
       },
     };
 

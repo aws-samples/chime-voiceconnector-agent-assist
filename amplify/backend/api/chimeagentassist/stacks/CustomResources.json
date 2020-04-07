@@ -25,10 +25,10 @@
 			"Type": "String",
 			"Description": "An S3 key relative to the S3DeploymentBucket that points to the root\nof the deployment directory."
 		},
-                "TranscriptSegmentTableName": {
-                        "Type": "String",
-                        "Description": "The DynamoDB table storing transcript segments."
-                }
+    "TranscriptSegmentTableName": {
+            "Type": "String",
+            "Description": "The DynamoDB table storing transcript segments."
+    }
 	},
 	"Resources": {
       "DynamoDBDataSourceServiceRole": {
