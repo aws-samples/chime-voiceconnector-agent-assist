@@ -1,0 +1,196 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "An auto-generated nested stack.",
+	"Metadata": {},
+	"Parameters": {
+		"AppSyncApiId": {
+			"Type": "String",
+			"Description": "The id of the AppSync API associated with this project."
+		},
+		"AppSyncApiName": {
+			"Type": "String",
+			"Description": "The name of the AppSync API",
+			"Default": "AppSyncSimpleTransform"
+		},
+		"env": {
+			"Type": "String",
+			"Description": "The environment name. e.g. Dev, Test, or Production",
+			"Default": "NONE"
+		},
+		"S3DeploymentBucket": {
+			"Type": "String",
+			"Description": "The S3 bucket containing all deployment assets for the project."
+		},
+		"S3DeploymentRootKey": {
+			"Type": "String",
+			"Description": "An S3 key relative to the S3DeploymentBucket that points to the root\nof the deployment directory."
+		},
+    "TranscriptSegmentTableName": {
+            "Type": "String",
+            "Description": "The DynamoDB table storing transcript segments."
+    }
+	},
+	"Resources": {
+      "DynamoDBDataSourceServiceRole": {
+	    "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Principal": {
+                          "Service": "appsync.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                      }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": {
+                            "Fn::Sub": "dynamodb_access-${AWS::Region}-${AWS::AccountId}"
+                        },
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                      "dynamodb:DeleteItem",
+                                      "dynamodb:GetItem",
+                                      "dynamodb:PutItem",
+                                      "dynamodb:Query",
+                                      "dynamodb:Scan",
+                                      "dynamodb:UpdateItem"
+                                    ],
+                                    "Resource": {
+                                      "Fn::Sub": "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "TranscriptSegmentDataSource": {
+            "Type": "AWS::AppSync::DataSource",
+            "DependsOn": ["DynamoDBDataSourceServiceRole"],
+            "Properties": {
+                "ApiId": {
+                  "Ref": "AppSyncApiId"
+                },
+                "Name": "TranscriptSegmentDataSource",
+                "Description": "The TranscriptSegment DynamoDB table",
+                "Type": "AMAZON_DYNAMODB",
+                "ServiceRoleArn": {
+                  "Fn::GetAtt": [
+                    "DynamoDBDataSourceServiceRole",
+                    "Arn"
+                  ]
+                },
+                "DynamoDBConfig": {
+                    "AwsRegion": {
+                      "Ref": "AWS::Region"
+                    },
+                    "TableName": {
+                      "Ref": "TranscriptSegmentTableName"
+                    }
+                }
+            }
+        },
+        "Announcements": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+                "ApiId": {
+                  "Ref": "AppSyncApiId"
+                },
+                "Name": "Announcements",
+                "Description": "The TranscriptSegment DynamoDB table",
+                "Type": "NONE"
+            }
+        },
+        "CreateTranscriptSegmentResolver": {
+          "Type": "AWS::AppSync::Resolver",
+          "Properties": {
+              "ApiId": {
+                "Ref": "AppSyncApiId"
+              },
+              "TypeName": "Mutation",
+              "FieldName": "createTranscriptSegment",
+              "DataSourceName": {
+                  "Fn::GetAtt": [
+                      "TranscriptSegmentDataSource",
+                      "Name"
+                  ]
+              },
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"PutItem\",\n    \"key\" : {\n        \"id\" : $util.dynamodb.toDynamoDBJson($util.autoId())\n    }\n    \"attributeValues\" : $util.dynamodb.toMapValuesJson($ctx.args)\n}\n",
+              "ResponseMappingTemplate": "$utils.toJson($ctx.result)"
+          }
+        },
+        "ListTranscriptSegmentsResolver": {
+          "Type": "AWS::AppSync::Resolver",
+          "Properties": {
+              "ApiId": {
+                "Ref": "AppSyncApiId"
+              },
+              "TypeName": "Query",
+              "FieldName": "listTranscriptSegments",
+              "DataSourceName": {
+                  "Fn::GetAtt": [
+                      "TranscriptSegmentDataSource",
+                      "Name"
+                  ]
+              },
+              "RequestMappingTemplate": "{\n \"version\" : \"2017-02-28\",\n \"operation\" : \"Scan\", \"filter\": #if($context.args.filter) $util.transform.toDynamoDBFilterExpression($ctx.args.filter) #else null #end,\n \"limit\" : $util.defaultIfNull($ctx.args.limit, 100),\n \"nextToken\": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.nextToken, null))\n}",
+              "ResponseMappingTemplate": "$utils.toJson($ctx.result)"
+          }
+        },
+        "AnnounceCreateTranscriptSegmentResolver": {
+          "Type": "AWS::AppSync::Resolver",
+          "Properties": {
+              "ApiId": {
+                "Ref": "AppSyncApiId"
+              },
+              "TypeName": "Mutation",
+              "FieldName": "announceCreateTranscriptSegment",
+              "DataSourceName": {
+                  "Fn::GetAtt": [
+                      "Announcements",
+                      "Name"
+                  ]
+              },
+              "RequestMappingTemplate": "{\n \"version\" : \"2017-02-28\", \n \"payload\" : $utils.toJson($context.arguments)\n}",
+              "ResponseMappingTemplate": "$utils.toJson($ctx.result.input)"
+          }
+        }
+        },
+	"Conditions": {
+		"HasEnvironmentParameter": {
+			"Fn::Not": [
+				{
+					"Fn::Equals": [
+						{
+							"Ref": "env"
+						},
+						"NONE"
+					]
+				}
+			]
+		},
+		"AlwaysFalse": {
+			"Fn::Equals": [
+				"true",
+				"false"
+			]
+		}
+	},
+	"Outputs": {
+		"EmptyOutput": {
+			"Description": "An empty output. You may delete this if you have at least one resource above.",
+			"Value": ""
+		}
+	}
+}
