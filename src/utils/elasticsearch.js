@@ -5,20 +5,23 @@ import AWS from 'aws-sdk';
 import { Auth } from 'aws-amplify';
 
 import awsExports from '../aws-exports';
+import {
+  SEARCH_LAMBDA_FUNCTION_NAME,
+  TRANSCRIPT_TABLE_NAME,
+  CDR_KEYWORD_PARAMETERS,
+  MAX_RESULT,
+  TRANSCRIPT_TABLE_KEYS,
+  ELASTIC_SEARCH_INDEX_NAMES,
+} from '../constants';
 
 const defaultRegion = awsExports.aws_project_region;
 AWS.config.update({ region: defaultRegion });
 
 const config = {
-  searchFunctionName: 'chime-search-transcript-and-audio',
-  transcriptTableName: 'TranscriptSegment',
-  maxRecords: 10,
-  cdrSearchableFields: [
-    'AwsAccountId',
-    'VoiceConnectorId',
-    'SourcePhoneNumber',
-    'DestinationPhoneNumber',
-  ],
+  searchFunctionName: SEARCH_LAMBDA_FUNCTION_NAME,
+  transcriptTableName: TRANSCRIPT_TABLE_NAME,
+  maxRecords: MAX_RESULT,
+  cdrSearchableFields: CDR_KEYWORD_PARAMETERS,
 };
 
 export function getSignedUrl(bucket, objectKey) {
@@ -45,13 +48,13 @@ export function retrieveBucketAndKey(transactionid) {
     };
 
     const esParams = {
-      index: 'wavfile',
+      index: ELASTIC_SEARCH_INDEX_NAMES.WAVFILE,
       type: '_doc',
       body: {
         size: 2,
         query: {
           query_string: {
-            default_field: 'TransactionId',
+            default_field: TRANSCRIPT_TABLE_KEYS.TRANSACTION_ID,
             query: transactionid,
           },
         },
@@ -84,7 +87,7 @@ export function retrieveTranscriptForTransactionId(transactionId) {
       TableName: config.transcriptTableName,
       KeyConditionExpression: '#id = :id',
       ExpressionAttributeNames: {
-        '#id': 'TransactionId',
+        '#id': TRANSCRIPT_TABLE_KEYS.TRANSACTION_ID,
       },
       ExpressionAttributeValues: {
         ':id': transactionId,
@@ -171,13 +174,13 @@ function queryCDRForTransactionId(transactionId) {
     };
 
     const esParams = {
-      index: 'cdr',
+      index: ELASTIC_SEARCH_INDEX_NAMES.CDR,
       type: '_doc',
       body: {
         size: 1,
         query: {
           query_string: {
-            default_field: 'TransactionId',
+            default_field: TRANSCRIPT_TABLE_KEYS.TRANSACTION_ID,
             query: transactionId,
           },
         },
@@ -217,7 +220,7 @@ function queryCDRForKeyword(keyword) {
     };
 
     const esParams = {
-      index: 'cdr',
+      index: ELASTIC_SEARCH_INDEX_NAMES.CDR,
       type: '_doc',
       body: {
         size: config.maxRecords,
@@ -266,7 +269,7 @@ function queryMetadataForKeyword(keyword) {
     };
 
     const esParams = {
-      index: 'metadata',
+      index: ELASTIC_SEARCH_INDEX_NAMES.METADATA,
       type: '_doc',
       body: {
         size: config.maxRecords,
@@ -308,7 +311,7 @@ export function queryTranscriptKeyword(keyword) {
     };
 
     const esParams = {
-      index: 'transcript',
+      index: ELASTIC_SEARCH_INDEX_NAMES.TRANSCRIPT,
       type: '_doc',
       body: {
         size: config.maxRecords,
