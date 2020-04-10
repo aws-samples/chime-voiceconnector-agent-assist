@@ -8,18 +8,34 @@ Making it easy to get started with Amazon Chime Voice Connector live audio strea
 - [Getting Started](#getting-started)
 
 ## Project Overview
-
-This project provides a frontend user interface to view call transcripts, customer sentiment analysis, and next best action in near real-time for an ongoing call. It also shows integration with Amazon Elastic Search to enable searching thru old transcripts using keywords or call metadata like To, From and Call-Ids etc.
-
-The frontend user interface is comprised of two parts: Active call and search. In Active call, agent is able to track the real-time transcription, capture the key object and sentiment that are detected through AWS Comprehend. In Search, agent can retrieve the transcription and audios by specifying a keyword such as transcription, call detail record, metadata, etc.
+Chime Agent Assist provides an excellent user experience for [Amazon Chime Voice Connector Transcription](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription). The frontend interface is comprised of two parts: Active call and Search. Active call allows customers to track the in-coming transcription from an active call. Key words and sentiment in the transcription are captured by AWS Comprehend and highlighted. Search allows customer to retrieve the call by specifying a related keyword such as keyword in the transcription, call detail record such as aws account, phone number, etc, metadata such as inviter header, media label, etc. Also audio from two legs can played and merged after the call is retrieved.
 
 ## Architecture Overview
 ![](images/agent-assist.svg)
 
 ### Description
-Chime Agent Assist consists of two parts. Search provides agents with access to old transcripts, metadata, call detail records, etc and allows agents to search thru th information. Once a keyword is entered, frontend will encapsulate the keyword in a query request and send it to the cluster. The cluster will return the result. At the same time, in-coming transcript, new call detail record and audio s3 object, metadata record from CloudWatch event will trigger the Lambda function, which later sends an index request to store the information for searching.
+Chime Agent Assist is configured with following resources: AWS Lambda, AWS Elasticsearch service, AWS S3, AWS Eventbridge, AWS DynamoDB, AWS AppSync and AWS Comprehend, etc. Chime Agent Assist consists of two parts and they are deployed with different tools. Active Call is configured and deployed using AWS Amplify. Search is deployed with AWS CloudFormation template and AWS Command Line Interface.
 
-Active call enables agents to track the call transcription, capture the key object and customer's sentiment in real time. This is accomplished by a frontend subscribing to AppSync and a Lambda function triggered by new transcription record. AppSync, after receiving the Lambda request, will return the new transcription to the frontend.
+Active Call is configured with AWS AppSync, AWS Lambda and AWS DynamoDB.
+
+When there is an in-flight call:
+- (Step 1) A call is initialed and users starts to browse the Agent Assist, the connection to AppSync for transcription subscription is automatically established. 
+- (Step 2) As the call continues, transcription segments from AWS Transcribe will be live streamed and stored in AWS DynamoDB table as records. 
+- (Step 3) An AWS Lambda function with the table as event source, is triggered to bring the transcription segment to AWS AppSync. The transcription subscription will send the transcription segment back to the frontend interface. 
+- (Step 4) The segment is sent to AWS Comprehend for keywords and sentiment detection. Then it will be displayed on the webpage.
+
+When there is no call:
+- (Step 1) The frontend sends a graphql query request to AWS AppSync to query all transcription segments. 
+- (Step 2) AppSync lists segments for every call from DynamoDB table and send it back to the frontend. 
+- (Step 3) The frontend filters out old calls and only display the latest call transcription. When the number of segment grows, AppSync and frontend will use pagination so that responses are easier to handle.
+
+Search is configured with AWS ElasticSearch, AWS Lambda and AWS S3, AWS EventBridge and AWS DynamoDB. ElasticSearch cluster is indexed with multiple sources so that transcription, call detail record, metadata search and audio download are supported. Call detail record is a set of information which provides detail on the resource used, time, place of the call. It is stored in S3 bucket. Metadata is request data inside SIP Invite request and it is distributed throught Eventbridge. Transcription is stored in DynamoDB from [Amazon Chime Voice Connector Transcription](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription). Call audios are stored in S3 bucket and the bucket and the key are indexed in cluster. If customer wants to play the audio, frontend will query the cluster for the s3 bucket and the key first, then send a request for presign url. Any new file, new record or new event will trigger a corresponding Lambda function to index the information to the cluster.
+
+Search steps:
+- (Step 1) Search keyword is entered.
+- (Step 2) The frontend sends a elastic search query request to AWS Lambda. Lambda sends the request to the cluster.
+- (Step 3) The cluster searches documents based on the keyword and returns a list of call `TransactionId` sorted by relevance.
+- (Step 4) After getting the call `TransactionId`, the frontend will then query the transcription from DynamoDb table, audio from S3, and call details from ElasticSearch.
 
 ## Getting Started
 Getting started with this project is easy. This can be accomplished by using the Amplify deployment and CloudFormation instructions below:
@@ -46,7 +62,7 @@ This step will provide a detailed steps on how to deploy the project.
 Download instruction:
 
 1. [Download](https://github.com/aws-samples/chime-agent-assist) repository in your workspace.
-2. Install all dependency for this project
+2. Install the package dependency
 
     ```
     npm install
@@ -54,7 +70,7 @@ Download instruction:
     or
 
     ```
-    yarn install
+    yarn
     ```
 3. Configure Amplify
 
@@ -66,19 +82,13 @@ Download instruction:
     ```
     amplify init
     ```
-5. Add DynamoDB table stream ARN to the configuration. Please replace `<transcriptSegment_stream_arn>` with the `TranscriptSegment` table stream arn
-
-    ```
-    cat > ./amplify/backend/function/chimevcagentassist76fdc921/parameters.json << EOF
-    {
-     "TranscriptSegmentTableStreamArn": "<transcriptSegment_stream_arn>",
-     "TranscriptSegmentTableName": "TranscriptSegment"
-    }
-    EOF
-    ```
-6. Push backend infrastructure to the cloud
+5. Push backend infrastructure to the cloud
 
     ```
     amplify push
     ```
-7. Install Search in `infrastructure/`. Please check the `command.md`.
+6. Install Search in `infrastructure/`. Please check the `infrastructure/command.md`.
+7. Publish the frontend to the cloud
+    ```
+    amplify publish
+    ```
