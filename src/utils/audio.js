@@ -5,6 +5,7 @@ import AWS from 'aws-sdk';
 import { Auth } from 'aws-amplify';
 
 import awsExports from '../aws-exports';
+import { MERGE_AUDIO_LAMBDA_FUNCTION_NAME } from '../constants';
 
 const defaultRegion = awsExports.aws_project_region;
 AWS.config.update({ region: defaultRegion });
@@ -17,7 +18,7 @@ export function getMergedAudioURL(bucket, oneAudioObject, otherAudioObject, tran
     });
 
     const params = {
-      FunctionName: 'chime-retrieve-merged-audio-url',
+      FunctionName: MERGE_AUDIO_LAMBDA_FUNCTION_NAME,
       InvocationType: 'RequestResponse',
     };
 

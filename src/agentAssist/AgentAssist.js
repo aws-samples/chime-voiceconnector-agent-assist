@@ -160,6 +160,7 @@ class AgentAssist extends React.Component {
           </thead>
           <tbody>{data}</tbody>
         </table>
+
         <div id="modal1" className="overlay">
           <a className="cancel" href="#a" title="Close modal">
             {' '}
