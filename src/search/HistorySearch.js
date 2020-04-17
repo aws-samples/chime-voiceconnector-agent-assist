@@ -52,7 +52,7 @@ class HistorySearch extends React.Component {
               id="searchField"
               fullWidth
               onChange={this.handleSearch}
-              helperText="Keyword includes CDRs (Account id, Voiceconnector id, phone number), Metadata(header, timestamp, etc) or Transcript"
+              helperText="Keyword includes CDRs (Account id, Voiceconnector id, phone number), Metadata(header, timestamp, etc) or Transcription"
             />
           </form>
         </div>
