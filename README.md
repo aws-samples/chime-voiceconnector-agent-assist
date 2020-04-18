@@ -53,41 +53,41 @@ This step will provide a detailed steps on how to deploy the project.
 ### Prerequisite
 - Install and configure [nvm](https://github.com/nvm-sh/nvm) and [npm](https://www.npmjs.com/get-npm)
 - Follow [steps](https://aws-amplify.github.io/docs/) to install Amplify CLI
-- (Optional) Install yarn following these [steps](https://classic.yarnpkg.com/en/docs/install)
 - [Real-time transcription with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) is deployed in the AWS account
-  - Follow [steps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html#Streams.Enabling) to enable stream on `TranscriptSegment` table, this is the table where transcripts are stored. Choose `NEW_IMAGE` or `NEW_AND_OLD_IMAGES` for StreamViewType
 
 ### Deploy with the AWS Amplify CLI
 
 Download instruction:
 
-1. [Download](https://github.com/aws-samples/chime-agent-assist) repository in your workspace.
+1. Clone this repository
 2. Install the package dependency
 
     ```
     npm install
     ```
-    or
-
-    ```
-    yarn
-    ```
-3. Configure Amplify
+3. Configure Amplify and AWS
 
     ```
     amplify configure
+    ```
+    and
+    ```
+    aws configure
     ```
 4. Init Amplify workspace
 
     ```
     amplify init
     ```
-5. Push backend infrastructure to the cloud
+5. Push Active Call infrastructure to the cloud
 
     ```
     amplify push
     ```
-6. Install Search in `infrastructure/`. Please check the `infrastructure/command.md`.
+6. Push Search infrastructure to the cloud
+    ```
+    chmod u+x ./infrastructure/deploy_search_infrastructure.sh && ./deploy_search_infrastructure.sh
+    ```
 7. Publish the frontend to the cloud
     ```
     amplify publish
