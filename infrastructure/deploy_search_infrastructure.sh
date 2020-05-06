@@ -13,7 +13,7 @@ zip_lambda_function () {
 
     echo "Download pydub for retrieveMergedAudioUrl function..."
     REPOSITORY=https://github.com/jiaaro/pydub.git
-    git clone $REPOSITORY && cp -r $INFRASTRUCTURE_DIR/pydub/pydub $INFRASTRUCTURE_DIR/function/src/retrieveMergedAudioUrl
+    git clone $REPOSITORY $INFRASTRUCTURE_DIR && cp -r $INFRASTRUCTURE_DIR/pydub/pydub $INFRASTRUCTURE_DIR/function/src/retrieveMergedAudioUrl
 
     # Zip files
     echo "Start zipping function..."
