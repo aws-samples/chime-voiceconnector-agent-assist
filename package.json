@@ -33,7 +33,6 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "babel-eslint": "10.0.3",
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.16.0",
     "husky": "^4.2.3",

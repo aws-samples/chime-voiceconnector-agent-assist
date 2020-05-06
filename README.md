@@ -86,9 +86,9 @@ Download instruction:
     ```
     chmod u+x ./infrastructure/deploy_search_infrastructure.sh && ./deploy_search_infrastructure.sh
     ```
-7. Publish the frontend to the cloud
+7. Pull the environment config and publish the frontend to the cloud
     ```
-    amplify publish
+    amplify pull && amplify publish
     ```
 8. You are all set to experience the Chime Voice Connector Agent Assist! Navigate to the hosting endpoint(Use following command to check the endpoint) and register an admin account.
     ```
