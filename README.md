@@ -14,7 +14,7 @@ Chime Agent Assist provides an excellent user experience for [Amazon Chime Voice
 ![](images/agent-assist.svg)
 
 ### Description
-Chime Agent Assist is configured with following resources: AWS Lambda, AWS Elasticsearch service, AWS S3, AWS Eventbridge, AWS DynamoDB, AWS AppSync and AWS Comprehend, etc. Chime Agent Assist consists of two parts and they are deployed with different tools. Active Call is configured and deployed using AWS Amplify. Search is deployed with AWS CloudFormation template and AWS Command Line Interface.
+Chime Voice Connector Agent Assist is configured with following resources: AWS Lambda, AWS Elasticsearch service, AWS S3, AWS Eventbridge, AWS DynamoDB, AWS AppSync and AWS Comprehend, etc. Chime Agent Assist consists of two parts and they are deployed with different tools. Active Call is configured and deployed using AWS Amplify. Search is deployed with AWS CloudFormation template and AWS Command Line Interface.
 
 Active Call is configured with AWS AppSync, AWS Lambda and AWS DynamoDB.
 
@@ -74,13 +74,11 @@ Download instruction:
     ```
     aws configure
     ```
-4. Init Amplify workspace
-
+4. Init Amplify workspace. Use the AWS profile you just created last step.
     ```
     amplify init
     ```
 5. Push Active Call infrastructure to the cloud
-
     ```
     amplify push
     ```
@@ -91,4 +89,8 @@ Download instruction:
 7. Publish the frontend to the cloud
     ```
     amplify publish
+    ```
+8. You are all set to experience the Chime Voice Connector Agent Assist! Navigate to the hosting endpoint(Use following command to check the endpoint) and register an admin account.
+    ```
+    amplify status
     ```
