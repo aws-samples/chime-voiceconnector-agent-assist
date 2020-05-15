@@ -108,7 +108,6 @@ export function retrieveTranscriptForTransactionId(transactionId) {
 export function queryCall(keyword) {
   return Promise.all([queryTranscriptKeyword(keyword), queryMetadataForKeyword(keyword)]).then(results => {
       // First step: find transaction id of the call that is correlated to the keyword.
-      console.log("first step ", results);
       const transcriptionPromises = results[0], metadataPromises = results[1];
       return Promise.all([keyword,
         transcriptionPromises.map(d => {
@@ -123,7 +122,6 @@ export function queryCall(keyword) {
       ]);
     }).then(promise => {
       // Second step: extract data for frontend.
-      console.log("metadata ", promise);
       const metadata = [...promise[1], ...promise[2]]
       const result = metadata.map(d => {
         const fromNumber = (d.fromNumber !== undefined || d.fromNumber !== null) ? d.fromNumber : "Unknown";
