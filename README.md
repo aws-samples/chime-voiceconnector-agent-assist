@@ -84,7 +84,7 @@ Download instruction:
     ```
 6. Push Search infrastructure to the cloud
     ```
-    chmod u+x ./infrastructure/deploy_search_infrastructure.sh && ./deploy_search_infrastructure.sh
+    chmod u+x ./infrastructure/deploy_search_infrastructure.sh && ./infrastructure/deploy_search_infrastructure.sh
     ```
 7. Pull the environment config and publish the frontend to the cloud
     ```

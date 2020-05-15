@@ -2,13 +2,17 @@
 // SPDX-License-Identifier: MIT-0
 
 const AWS = require('aws-sdk');
-const esDomain = {
-    endpoint: process.env.ES_ENDPOINT,
+const esIndex = {
     region: process.env.REGION,
     index: 'metadata',
     doctype: '_doc'
 };
-const endpoint = new AWS.Endpoint(esDomain.endpoint);
+const esUpdate = {
+    region: process.env.REGION,
+    index: 'metadata',
+    doctype: '_update'
+}
+const endpoint = new AWS.Endpoint(process.env.ES_ENDPOINT);
 exports.handler = function (event, context) {
     console.log("event ", JSON.stringify(event));
     const response = {
@@ -19,15 +23,23 @@ exports.handler = function (event, context) {
     const transactionId = detail.transactionId;
 
     if(detail.streamingStatus === 'STARTED') {
-        postDocumentToES(detail, transactionId, context);
+        postDocumentToES(esIndex, detail, transactionId, context);
+    }
+    
+    if(detail.streamingStatus === 'ENDED') {
+        // Only endTime needs to be updated for the document of the call.
+        const payload = {
+            "script": `ctx._source.endTime = '${detail.endTime}'`
+        }
+        postDocumentToES(esUpdate, payload, transactionId, context);
     }
     return response;
 };
-function postDocumentToES(doc, id, context) {
+function postDocumentToES(esConfig, doc, id, context) {
     const req = new AWS.HttpRequest(endpoint);
     req.method = 'POST';
-    req.path += esDomain.index + '/' + esDomain.doctype + '/' + id;
-    req.region = esDomain.region;
+    req.path += esConfig.index + '/' + esConfig.doctype + '/' + id;
+    req.region = esConfig.region;
     req.body = JSON.stringify(doc);
     req.headers['presigned-expires'] = false;
     req.headers['Host'] = endpoint.host;
