@@ -25,21 +25,12 @@ export const TRANSCRIPT_TABLE_KEYS = {
 export const SEARCH_LAMBDA_FUNCTION_NAME = 'chime-search-transcript-and-audio';
 export const MERGE_AUDIO_LAMBDA_FUNCTION_NAME = 'chime-retrieve-merged-audio-url';
 
-// Keywords that are considered for search
-export const CDR_KEYWORD_PARAMETERS = [
-  'AwsAccountId',
-  'VoiceConnectorId',
-  'SourcePhoneNumber',
-  'DestinationPhoneNumber',
-];
-
 // Max number of result per one search returned by elastic search
 export const MAX_RESULT = 10;
 
 // Search index
 export const ELASTIC_SEARCH_INDEX_NAMES = {
   WAVFILE: 'wavfile',
-  CDR: 'cdr',
   METADATA: 'metadata',
   TRANSCRIPT: 'transcript',
 };

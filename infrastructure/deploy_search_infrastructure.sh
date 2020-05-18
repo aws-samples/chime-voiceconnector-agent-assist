@@ -13,7 +13,7 @@ zip_lambda_function () {
 
     echo "Download pydub for retrieveMergedAudioUrl function..."
     REPOSITORY=https://github.com/jiaaro/pydub.git
-    git clone $REPOSITORY $INFRASTRUCTURE_DIR && cp -r $INFRASTRUCTURE_DIR/pydub/pydub $INFRASTRUCTURE_DIR/function/src/retrieveMergedAudioUrl
+    git clone $REPOSITORY $INFRASTRUCTURE_DIR/pydub && cp -r $INFRASTRUCTURE_DIR/pydub/pydub $INFRASTRUCTURE_DIR/function/src/retrieveMergedAudioUrl
 
     # Zip files
     echo "Start zipping function..."
@@ -39,40 +39,7 @@ zip_lambda_function () {
     rm -rf $INFRASTRUCTURE_DIR/pydub
 }
 
-set_s3_notification_for_cdr_bucket () {
-    CDR_BUCKET_NAME=$(aws chime get-global-settings | jq -r '.VoiceConnector.CdrBucket')
-    CDR_STREAMING_FUNCTION_ARN=arn:aws:lambda:us-east-1:"$ACCOUNT":function:chime-cdr-streaming
-
-    echo "Setting s3 notification for CDR bucket " $CDR_BUCKET_NAME "..."
-    cat << EOF > cdr_bucket_notification.json
-    {
-        "LambdaFunctionConfigurations":
-        [
-            {
-              "LambdaFunctionArn": "$CDR_STREAMING_FUNCTION_ARN",
-              "Events": ["s3:ObjectCreated:*"],
-              "Filter": {
-                "Key": {
-                  "FilterRules": [
-                    {
-                      "Name": "prefix",
-                      "Value": "Amazon-Chime-Voice-Connector-CDRs"
-                    }
-                  ]
-                }
-              }
-            }
-        ]
-    }
-EOF
-
-    aws lambda add-permission --function-name chime-cdr-streaming --action lambda:InvokeFunction --statement-id s3-streaming --principal s3.amazonaws.com --source-arn arn:aws:s3:::$CDR_BUCKET_NAME --source-account $ACCOUNT
-    aws s3api put-bucket-notification-configuration --bucket $CDR_BUCKET_NAME --notification-configuration file://cdr_bucket_notification.json
-
-    rm -rf cdr_bucket_notification.json
-}
-
-set_s3_notification_for_audio_bucker () {
+set_s3_notification_for_audio_bucket () {
     AUDIO_BUCKET_NAME=callrecordings-us-east-1-$ACCOUNT
     AUDIO_BUCKET_STREAMING_FUNCTION_ARN=arn:aws:lambda:us-east-1:"$ACCOUNT":function:chime-s3-audio-streaming
 
@@ -88,7 +55,7 @@ set_s3_notification_for_audio_bucker () {
     }
 EOF
 
-    aws lambda add-permission --function-name chime-s3-audio-streaming --action lambda:InvokeFunction --statement-id s3-streaming --principal s3.amazonaws.com --source-arn arn:aws:s3:::$AUDIO_BUCKET_NAME --source-account $ACCOUNT
+    aws lambda add-permission --function-name chime-s3-audio-streaming --action lambda:InvokeFunction --statement-id s3-streaming --principal s3.amazonaws.com --source-arn arn:aws:s3:::$AUDIO_BUCKET_NAME --source-account $ACCOUNT || true
     aws s3api put-bucket-notification-configuration --bucket $AUDIO_BUCKET_NAME --notification-configuration file://audio_bucket_notification.json
 
     rm -rf audio_bucket_notification.json
@@ -114,5 +81,4 @@ echo "Deploying..."
 aws cloudformation deploy --template-file $INFRASTRUCTURE_DIR/packaged.json --stack-name chime-elasticsearch --capabilities CAPABILITY_IAM --region us-east-1
 
 echo "Configuring s3 notification..."
-set_s3_notification_for_cdr_bucket
-set_s3_notification_for_audio_bucker
+set_s3_notification_for_audio_bucket

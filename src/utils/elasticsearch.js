@@ -8,7 +8,6 @@ import awsExports from '../aws-exports';
 import {
   SEARCH_LAMBDA_FUNCTION_NAME,
   TRANSCRIPT_TABLE_NAME,
-  CDR_KEYWORD_PARAMETERS,
   MAX_RESULT,
   TRANSCRIPT_TABLE_KEYS,
   ELASTIC_SEARCH_INDEX_NAMES,
@@ -21,7 +20,6 @@ const config = {
   searchFunctionName: SEARCH_LAMBDA_FUNCTION_NAME,
   transcriptTableName: TRANSCRIPT_TABLE_NAME,
   maxRecords: MAX_RESULT,
-  cdrSearchableFields: CDR_KEYWORD_PARAMETERS,
 };
 
 export function getSignedUrl(bucket, objectKey) {
@@ -66,7 +64,7 @@ export function retrieveBucketAndKey(transactionid) {
     return lambda
       .invoke(params)
       .promise()
-      .then(function(data) {
+      .then((data) => {
         const body = JSON.parse(data.Payload).body;
         if (body === undefined || body === []) {
           return [];
@@ -97,7 +95,7 @@ export function retrieveTranscriptForTransactionId(transactionId) {
     return ddb
       .query(params)
       .promise()
-      .then(function(data) {
+      .then((data) => {
         if (data.Count === 0) {
           return [];
         }
@@ -108,152 +106,36 @@ export function retrieveTranscriptForTransactionId(transactionId) {
 }
 
 export function queryCall(keyword) {
-  // What can be the keyword? Transcript, metadata or CDR
-  // If word can be found in transcript, return transcript
-  //
-  // If it can't be found in transcript:
-  // Query metadata first. If we can find records, query cdr to find if the
-  // call already ended. If it did, return cdr, otherwise return metadata.
-  // If we cannot find anything in metadata, then the field queried is not included in metadata.
-  // We will query CDR to find if any call could be found.
-  return queryTranscriptKeyword(keyword).then(dataForTranscript => {
-    if (dataForTranscript.length !== 0) {
-      return Promise.all(
-        dataForTranscript.map(d => {
-          return queryCDRForTransactionId(d.TransactionId).then(cdr => {
-            if (cdr.length !== 0) {
-              return cdr[0];
-            } else {
-              return {
-                TransactionId: 'Unknown Id',
-                Direction: 'Unknown Direction',
-                StartTimeEpochSeconds: Math.ceil(Date.now() / 1000),
-                SourcePhoneNumber: 'Unknown Number',
-              };
+  return Promise.all([queryTranscriptKeyword(keyword), queryMetadataForKeyword(keyword)]).then(results => {
+      // First step: find transaction id of the call that is correlated to the keyword.
+      const transcriptionPromises = results[0], metadataPromises = results[1];
+      return Promise.all([keyword,
+        transcriptionPromises.map(d => {
+          return queryMetadataForKeyword(d.TransactionId).then(metadata => {
+            // Metadata should correlate with only one transactionId.
+            if (metadata.length === 1) {
+              return metadata[0];
             }
           });
-        })
-      );
-    } else {
-      return queryMetadataForKeyword(keyword).then(dataList => {
-        if (dataList.length !== 0) {
-          return Promise.all(
-            dataList.map(d => {
-              return queryCDRForTransactionId(d.transactionId).then(cdr => {
-                if (cdr.length === 0) {
-                  return {
-                    TransactionId: d.transactionId,
-                    Direction: d.direction,
-                    StartTimeEpochSeconds: Math.ceil(new Date(d.startTime) / 1000),
-                    SourcePhoneNumber: 'In Call',
-                  };
-                } else {
-                  return cdr[0];
-                }
-              });
-            })
-          );
-        } else {
-          return queryCDRForKeyword(keyword);
+        }),
+        metadataPromises
+      ]);
+    }).then(promise => {
+      // Second step: extract data for frontend.
+      const metadata = [...promise[1], ...promise[2]]
+      const result = metadata.map(d => {
+        const fromNumber = (d.fromNumber !== undefined || d.fromNumber !== null) ? d.fromNumber : "Unknown";
+        return {
+          TransactionId: d.transactionId,
+          Direction: d.direction,
+          StartTimeEpochSeconds: Math.ceil(new Date(d.startTime) / 1000),
+          EndTimeEpochSeconds: Math.ceil(new Date(d.endTime) / 1000),
+          SourcePhoneNumber: fromNumber,
         }
       });
-    }
-  });
-}
 
-function queryCDRForTransactionId(transactionId) {
-  return Auth.currentCredentials().then(creds => {
-    const lambda = new AWS.Lambda({
-      region: defaultRegion,
-      credentials: Auth.essentialCredentials(creds),
-    });
-
-    const params = {
-      FunctionName: config.searchFunctionName,
-      InvocationType: 'RequestResponse',
-    };
-
-    const esParams = {
-      index: ELASTIC_SEARCH_INDEX_NAMES.CDR,
-      type: '_doc',
-      body: {
-        size: 1,
-        query: {
-          query_string: {
-            default_field: TRANSCRIPT_TABLE_KEYS.TRANSACTION_ID,
-            query: transactionId,
-          },
-        },
-      },
-      output: [],
-    };
-
-    esParams.highlight = { fields: {} };
-    config.cdrSearchableFields.forEach(key => {
-      esParams.highlight.fields[key] = {};
-    });
-
-    params['Payload'] = Buffer.from(JSON.stringify(esParams));
-    return lambda
-      .invoke(params)
-      .promise()
-      .then(function(data) {
-        const body = JSON.parse(data.Payload).body;
-        if (body === undefined || body === []) {
-          return [];
-        }
-        return JSON.parse(data.Payload).body.Records;
-      });
-  });
-}
-
-function queryCDRForKeyword(keyword) {
-  return Auth.currentCredentials().then(creds => {
-    const lambda = new AWS.Lambda({
-      region: defaultRegion,
-      credentials: Auth.essentialCredentials(creds),
-    });
-
-    const params = {
-      FunctionName: config.searchFunctionName,
-      InvocationType: 'RequestResponse',
-    };
-
-    const esParams = {
-      index: ELASTIC_SEARCH_INDEX_NAMES.CDR,
-      type: '_doc',
-      body: {
-        size: config.maxRecords,
-        sort: { EndTimeEpochSeconds: { order: 'desc' } },
-        query: {
-          multi_match: {
-            fields: config.cdrSearchableFields,
-            type: 'best_fields',
-            query: keyword,
-            fuzziness: '2',
-          },
-        },
-      },
-      output: [],
-    };
-
-    esParams.highlight = { fields: {} };
-    config.cdrSearchableFields.forEach(key => {
-      esParams.highlight.fields[key] = {};
-    });
-
-    params['Payload'] = Buffer.from(JSON.stringify(esParams));
-    return lambda
-      .invoke(params)
-      .promise()
-      .then(function(data) {
-        const body = JSON.parse(data.Payload).body;
-        if (body === undefined || body === []) {
-          return [];
-        }
-        return JSON.parse(data.Payload).body.Records;
-      });
-  });
+      return new Promise(resolve => resolve(result));
+    })
 }
 
 function queryMetadataForKeyword(keyword) {
@@ -288,7 +170,7 @@ function queryMetadataForKeyword(keyword) {
     return lambda
       .invoke(params)
       .promise()
-      .then(function(data) {
+      .then((data) => {
         const body = JSON.parse(data.Payload).body;
         if (body === undefined || body === []) {
           return [];
@@ -331,7 +213,7 @@ export function queryTranscriptKeyword(keyword) {
     return lambda
       .invoke(params)
       .promise()
-      .then(function(data) {
+      .then((data) => {
         const body = JSON.parse(data.Payload).body;
         if (body === undefined || body === []) {
           return [];

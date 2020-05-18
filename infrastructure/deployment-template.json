@@ -2,30 +2,6 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Resources to process Chime Voice Connector audio from KVS, transcribe, and save output to DynamoDB table",
   "Resources": {
-    "CDRStreamingExecutionRole": {
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "sts:AssumeRole"
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "lambda.amazonaws.com"
-                ]
-              }
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-        ]
-      },
-      "Type": "AWS::IAM::Role"
-    },
     "RetrieveMergedAudioUrlExecutionRole": {
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -146,7 +122,6 @@
     "LogPublishPolicy": {
       "DependsOn": [
         "ElasticSearchLambdaExecutionRole",
-        "CDRStreamingExecutionRole",
         "S3AudioStreamingExecutionRole",
         "MetadataStreamingExecutionRole",
         "RetrieveMergedAudioUrlExecutionRole",
@@ -173,9 +148,6 @@
             "Ref": "ElasticSearchLambdaExecutionRole"
           },
           {
-            "Ref": "CDRStreamingExecutionRole"
-          },
-          {
             "Ref": "S3AudioStreamingExecutionRole"
           },
           {
@@ -194,7 +166,6 @@
     "ElasticsearchDomain": {
       "DependsOn": [
         "ElasticSearchLambdaExecutionRole",
-        "CDRStreamingExecutionRole",
         "S3AudioStreamingExecutionRole",
         "MetadataStreamingExecutionRole",
         "TranscriptToESExecutionRole"
@@ -209,21 +180,6 @@
                 "AWS": {
                   "Fn::GetAtt": [
                     "ElasticSearchLambdaExecutionRole",
-                    "Arn"
-                  ]
-                }
-              },
-              "Resource": {
-                "Fn::Sub": "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/search/*"
-              }
-            },
-            {
-              "Action": "es:*",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "CDRStreamingExecutionRole",
                     "Arn"
                   ]
                 }
@@ -419,35 +375,6 @@
       },
       "Type": "AWS::Serverless::Function"
     },
-    "CDRStreamingLambdaFunction": {
-      "Properties": {
-        "CodeUri": "./function/build/cdrStreamingLambdaFunction.zip",
-        "Environment": {
-          "Variables": {
-            "ES_ENDPOINT": {
-              "Fn::GetAtt": [
-                "ElasticsearchDomain",
-                "DomainEndpoint"
-              ]
-            },
-            "REGION": {
-              "Ref": "AWS::Region"
-            }
-          }
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "CDRStreamingExecutionRole",
-            "Arn"
-          ]
-        },
-        "Runtime": "nodejs12.x",
-        "Timeout": 3,
-        "FunctionName": "chime-cdr-streaming"
-      },
-      "Type": "AWS::Serverless::Function"
-    },
     "TranscriptToESLambdaFunction": {
       "Properties": {
         "CodeUri": "./function/build/transcriptToESFunction.zip",
@@ -484,7 +411,7 @@
                       "detail-type": [
                         "Chime VoiceConnector Streaming Status"
                       ]
-                  },
+                  }
                 }
             }
         }
