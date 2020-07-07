@@ -105,6 +105,9 @@ export function mergeTranscript(segments) {
       if (e.Transcript.search(/\bmiss[a-z]* \b[a-z]*\b \b(connect|flight)[a-z]*/i) !== -1) {
         e.Action = 'ConnectionDoctor';
       }
+      if (e.Transcript.search(/\bchange[a-z]* \b[a-z]*\b \b(plan|service)[a-z]*/i) !== -1) {
+        e.Action = 'PlanSearch';
+      }
     }
   });
   return mergedSegments;
