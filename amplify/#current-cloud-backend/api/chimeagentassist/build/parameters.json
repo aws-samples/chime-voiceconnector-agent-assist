@@ -1,0 +1,9 @@
+{
+    "CreateAPIKey": 1,
+    "AppSyncApiName": "chimeagentassist",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": "false",
+    "TranscriptSegmentTableName": "TranscriptSegment",
+    "S3DeploymentBucket": "amplify-chime-vc-agentassist-dev-50648-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/279d29ccbe6f2c3ae2621c9c48f5b43db22c6288"
+}

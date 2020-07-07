@@ -55,7 +55,7 @@ set_s3_notification_for_audio_bucket () {
     }
 EOF
 
-    aws lambda add-permission --function-name chime-s3-audio-streaming --action lambda:InvokeFunction --statement-id s3-streaming --principal s3.amazonaws.com --source-arn arn:aws:s3:::$AUDIO_BUCKET_NAME --source-account $ACCOUNT || true
+#    aws lambda add-permission --function-name chime-s3-audio-streaming --action lambda:InvokeFunction --statement-id s3-streaming --principal s3.amazonaws.com --source-arn arn:aws:s3:::$AUDIO_BUCKET_NAME --source-account $ACCOUNT || true
     aws s3api put-bucket-notification-configuration --bucket $AUDIO_BUCKET_NAME --notification-configuration file://audio_bucket_notification.json
 
     rm -rf audio_bucket_notification.json
@@ -69,7 +69,7 @@ ROOT_DIR=$(pwd)
 INFRASTRUCTURE_DIR=$ROOT_DIR/infrastructure
 
 echo "Creating S3 Bucket..."
-aws s3api create-bucket --bucket $S3_BUCKET_NAME --region us-east-1
+#aws s3api create-bucket --bucket $S3_BUCKET_NAME --region us-east-1
 
 echo "Zipping Lambda functions..."
 zip_lambda_function

@@ -1,0 +1,6 @@
+{
+    "AppSyncApiName": "chimeagentassist",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": "false",
+    "TranscriptSegmentTableName": "TranscriptSegment"
+}

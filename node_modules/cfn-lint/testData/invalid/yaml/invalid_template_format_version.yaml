@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2016-01-01'
+
+Resources:
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SecurityGroupIds:
+      - "sg-123"
+      SubnetId: "subnet-aaaaa"
+      InstanceType: "t1.micro"
+      AvailabilityZone: "eu-west-1"
+      ImageId: "ami-aaaaaaa"

@@ -1,0 +1,1 @@
+{"version":3,"file":"SchemaResourceUtil.d.ts","sourceRoot":"","sources":["../../src/util/SchemaResourceUtil.ts"],"names":[],"mappings":"AACA,OAAO,QAAQ,MAAM,gCAAgC,CAAC;AAGtD,OAAO,QAAQ,MAAM,gCAAgC,CAAC;AAKtD,qBAAa,kBAAkB;IACtB,wBAAwB,IAAI,QAAQ;IAiBpC,yBAAyB;;;IAQzB,sBAAsB,CAAC,QAAQ,EAAE,QAAQ;IAsBzC,mCAAmC,CAAC,QAAQ,EAAE,QAAQ;IAsBtD,iBAAiB,CAAC,MAAM,CAAC,EAAE,MAAM;CAezC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"isList.js","sourceRoot":"src/","sources":["generator/utils/isList.ts"],"names":[],"mappings":";;AAAA,qCAAiE;AAEjE,SAAwB,MAAM,CAAC,OAAoB;IACjD,IAAI,uBAAa,CAAC,OAAO,CAAC,EAAE;QAC1B,OAAO,MAAM,CAAC,OAAO,CAAC,MAAM,CAAC,CAAC;KAC/B;IACD,OAAO,oBAAU,CAAC,OAAO,CAAC,CAAC;AAC7B,CAAC;AALD,yBAKC"}

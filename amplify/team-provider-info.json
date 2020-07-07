@@ -1,0 +1,24 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-chime-vc-agentassist-dev-50648-authRole",
+            "UnauthRoleArn": "arn:aws:iam::083981752084:role/amplify-chime-vc-agentassist-dev-50648-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::083981752084:role/amplify-chime-vc-agentassist-dev-50648-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-chime-vc-agentassist-dev-50648-deployment",
+            "UnauthRoleName": "amplify-chime-vc-agentassist-dev-50648-unauthRole",
+            "StackName": "amplify-chime-vc-agentassist-dev-50648",
+            "StackId": "arn:aws:cloudformation:us-east-1:083981752084:stack/amplify-chime-vc-agentassist-dev-50648/aa5e9870-c00f-11ea-b63e-1277bf9feb05",
+            "AmplifyAppId": "d2qtq7jr1pgp7g"
+        },
+        "categories": {
+            "auth": {
+                "cognitocf0c6096": {}
+            },
+            "function": {
+                "chimevcagentassist76fdc921": {},
+                "chimeagentassist": {}
+            }
+        }
+    }
+}

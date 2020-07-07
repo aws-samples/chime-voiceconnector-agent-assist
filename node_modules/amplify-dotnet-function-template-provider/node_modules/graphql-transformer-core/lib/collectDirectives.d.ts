@@ -1,0 +1,14 @@
+import { ObjectTypeDefinitionNode, DirectiveNode, InterfaceTypeDefinitionNode, UnionTypeDefinitionNode, ScalarTypeDefinitionNode, InputObjectTypeDefinitionNode, FieldDefinitionNode, InputValueDefinitionNode, EnumValueDefinitionNode, EnumTypeDefinitionNode } from 'graphql';
+export declare function collectDirectiveNames(sdl: string): string[];
+export declare function collectDirectives(sdl: string): DirectiveNode[];
+export declare function collectDirectivesByTypeNames(sdl: string): Object;
+export declare function collectDirectivesByType(sdl: string): Object;
+export declare function collectObjectDirectives(node: ObjectTypeDefinitionNode): DirectiveNode[];
+export declare function collectInterfaceDirectives(node: InterfaceTypeDefinitionNode): DirectiveNode[];
+export declare function collectFieldDirectives(node: FieldDefinitionNode): DirectiveNode[];
+export declare function collectArgumentDirectives(node: InputValueDefinitionNode): DirectiveNode[];
+export declare function collectUnionDirectives(node: UnionTypeDefinitionNode): DirectiveNode[];
+export declare function collectScalarDirectives(node: ScalarTypeDefinitionNode): DirectiveNode[];
+export declare function collectInputObjectDirectives(node: InputObjectTypeDefinitionNode): DirectiveNode[];
+export declare function collectEnumDirectives(node: EnumTypeDefinitionNode): DirectiveNode[];
+export declare function collectEnumValueDirectives(node: EnumValueDefinitionNode): DirectiveNode[];

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/storage/adapter/getDefaultAdapter/index.ts"],"names":[],"mappings":";;AAEA,IAAM,iBAAiB,GAAkB;IACxC,IAAI,MAAM,CAAC,SAAS,EAAE;QACrB,OAAO,OAAO,CAAC,cAAc,CAAC,CAAC,OAAO,CAAC;KACvC;IACD,IAAI,OAAO,IAAI,OAAO,CAAC,GAAG,EAAE;QAC3B,MAAM,IAAI,KAAK,CAAC,uBAAuB,CAAC,CAAC;KACzC;AACF,CAAC,CAAC;AAEF,kBAAe,iBAAiB,CAAC"}

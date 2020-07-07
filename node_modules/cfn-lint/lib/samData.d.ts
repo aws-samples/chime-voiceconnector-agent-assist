@@ -1,0 +1,12 @@
+import * as awsData from './awsData';
+export declare const samPrimitiveTypes: string[];
+export declare const samSchema20161031Filepath = "../data/sam_20161031_schema.json";
+export declare const samSchema20161031: any;
+export declare const samImplicitResources20161031Filepath = "../data/sam_20161031_output_resources.json";
+export declare const samImplicitResources20161031: any;
+export declare const samCustomSpecification20161031Filepath = "../data/sam_20161031_custom_specification.json";
+export declare const samCustomSpecification20161031: any;
+export declare const samResources20161031Filepath = "../data/sam_20161031_cfn.json";
+export declare const samResources20161031: awsData.AWSResourcesSpecification;
+export declare const samGlobals20161031Filepath = "../data/sam_20161031_globals.json";
+export declare const samGlobals20161031: any;

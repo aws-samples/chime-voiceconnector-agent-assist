@@ -1,0 +1,114 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "amplify-chime-vc-agentassist-dev-50648-authRole",
+			"UnauthRoleArn": "arn:aws:iam::083981752084:role/amplify-chime-vc-agentassist-dev-50648-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::083981752084:role/amplify-chime-vc-agentassist-dev-50648-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "amplify-chime-vc-agentassist-dev-50648-deployment",
+			"UnauthRoleName": "amplify-chime-vc-agentassist-dev-50648-unauthRole",
+			"StackName": "amplify-chime-vc-agentassist-dev-50648",
+			"StackId": "arn:aws:cloudformation:us-east-1:083981752084:stack/amplify-chime-vc-agentassist-dev-50648/aa5e9870-c00f-11ea-b63e-1277bf9feb05",
+			"AmplifyAppId": "d2qtq7jr1pgp7g"
+		}
+	},
+	"auth": {
+		"cognitocf0c6096": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-dev-50648-deployment/amplify-cfn-templates/auth/cognitocf0c6096-cloudformation-template.yml",
+				"logicalId": "authcognitocf0c6096"
+			},
+			"lastPushTimeStamp": "2020-07-07T05:10:37.269Z",
+			"output": {
+				"AppClientSecret": "g53dom378vrqme1649q8jgtap6enmnfn9906pha3v7lbrli4al4",
+				"UserPoolId": "us-east-1_LXVMQXoVD",
+				"AppClientIDWeb": "2d8pv68eepg1e0brtr0f67pi7u",
+				"AppClientID": "55441lukis2mh6l03jp5aq5j98",
+				"IdentityPoolId": "us-east-1:da548ad1-04e6-4632-9a07-1442e38c4763",
+				"IdentityPoolName": "cognitocf0c6096_identitypool_cf0c6096__dev",
+				"UserPoolName": "cognitocf0c6096_userpool_cf0c6096"
+			},
+			"lastPushDirHash": "2FGEyYtIZRSJVCtx2Gi6B1oih4o="
+		}
+	},
+	"api": {
+		"chimeagentassist": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "API_KEY",
+						"apiKeyConfig": {
+							"description": "",
+							"apiKeyExpirationDays": 365
+						}
+					}
+				},
+				"GraphQLAPIIdOutput": "gtn4wmy6unh4bpxpreathzk2fa",
+				"GraphQLAPIEndpointOutput": "https://hyrd63b2frd2bktcsiclvpzkii.appsync-api.us-east-1.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-sk4dq4wjzjbl3lxsxzltgd2ja4"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-dev-50648-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apichimeagentassist"
+			},
+			"lastPushTimeStamp": "2020-07-07T05:10:37.269Z",
+			"lastPushDirHash": "8GePeIuOcP25yJR/TV78MO4QWY8="
+		}
+	},
+	"hosting": {
+		"S3AndCloudFront": {
+			"service": "S3AndCloudFront",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-dev-50648-deployment/amplify-cfn-templates/hosting/template.json",
+				"logicalId": "hostingS3AndCloudFront"
+			},
+			"lastPushTimeStamp": "2020-07-07T05:10:37.269Z",
+			"output": {
+				"S3BucketSecureURL": "https://chime-vc-agentassist-083981752084-hostingbucket-dev.s3.amazonaws.com",
+				"WebsiteURL": "http://chime-vc-agentassist-083981752084-hostingbucket-dev.s3-website-us-east-1.amazonaws.com",
+				"Region": "us-east-1",
+				"HostingBucketName": "chime-vc-agentassist-083981752084-hostingbucket-dev"
+			},
+			"lastPushDirHash": "ALecLIKAZM5QSbrTJdw3Kkwzs7w="
+		}
+	},
+	"function": {
+		"chimevcagentassist76fdc921": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": [
+				{
+					"category": "api",
+					"resourceName": "chimeagentassist",
+					"attributes": [
+						"GraphQLAPIIdOutput",
+						"GraphQLAPIEndpointOutput",
+						"GraphQLAPIKeyOutput"
+					]
+				}
+			],
+			"lastBuildTimeStamp": "2020-07-07T05:08:00.821Z",
+			"lastPackageTimeStamp": "2020-07-07T05:08:00.885Z",
+			"distZipFilename": "chimevcagentassist76fdc921-6457397072776b6c396f-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-chime-vc-agentassist-dev-50648-deployment/amplify-cfn-templates/function/chimevcagentassist76fdc921-cloudformation-template.json",
+				"logicalId": "functionchimevcagentassist76fdc921"
+			},
+			"lastPushTimeStamp": "2020-07-07T05:10:37.269Z",
+			"output": {
+				"Region": "us-east-1",
+				"Arn": "arn:aws:lambda:us-east-1:083981752084:function:chimevcagentassist76fdc921-dev",
+				"Name": "chimevcagentassist76fdc921-dev",
+				"LambdaExecutionRole": "chimevcagentassistLambdaRole658c2b1b-dev"
+			},
+			"lastPushDirHash": "eyHasLQ5SRS9seolsoOX+aRzMLU="
+		}
+	}
+}

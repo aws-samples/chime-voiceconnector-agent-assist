@@ -1,0 +1,1 @@
+{"version":3,"file":"getType.js","sourceRoot":"src/","sources":["generator/utils/getType.ts"],"names":[],"mappings":";;AAAA,qCAAmE;AAInE,SAAwB,OAAO,CAAC,OAAoB;IAClD,IAAI,OAAO,YAAY,qBAAW,IAAI,OAAO,YAAY,wBAAc,EAAE;QACvE,OAAO,OAAO,CAAC,OAAO,CAAC,MAAM,CAAC,CAAC;KAChC;IACD,OAAO,OAAO,CAAC;AACjB,CAAC;AALD,0BAKC"}

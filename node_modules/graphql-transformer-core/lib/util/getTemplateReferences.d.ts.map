@@ -1,0 +1,1 @@
+{"version":3,"file":"getTemplateReferences.d.ts","sourceRoot":"","sources":["../../src/util/getTemplateReferences.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,MAAM,gCAAgC,CAAC;AAMtD,MAAM,WAAW,YAAY;IAC3B,CAAC,WAAW,EAAE,MAAM,GAAG,MAAM,EAAE,EAAE,CAAC;CACnC;AAMD,wBAAgB,qBAAqB,CAAC,QAAQ,EAAE,QAAQ,GAAG,YAAY,CAEtE"}
