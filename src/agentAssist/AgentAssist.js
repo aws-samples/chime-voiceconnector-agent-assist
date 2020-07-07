@@ -248,6 +248,51 @@ class AgentAssist extends React.Component {
             </div>
           </div>
         </div>
+        
+        <div id="modal3" className="overlay">
+          <a className="cancel" href="#a" title="Close modal">
+            {' '}
+          </a>
+          <div className="modal">
+            <h1>How to change current plan</h1>
+            <div className="content">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Document Title: </td>
+                    <td>How to change plan</td>
+                  </tr>
+                  <tr>
+                    <td>Source: </td>
+                    <td>https://www.att.com/support/article/wireless/KM1010787/</td>
+                  </tr>
+                  <tr>
+                    <td>Steps: </td>
+                    <td>Go to Change my plan to see your current plan and our other plans.<br/>
+                    Scroll through our other plans. Select Compare to my plan to get a side-by-side view.<br/>
+                    Compare plans and decide which one you want.<br/>
+                    Choose Select & review and follow the prompts to switch plans.</td>
+
+                  </tr>
+                  <tr>
+                    <td>Additioanl information</td>
+                    <td>
+                      <span className="opt" onClick={() => console.log('ReleaseNotes')}>
+                        Release notes
+                      </span>
+                      <span className="opt" onClick={() => console.log('Manager')}>
+                        Mgr. Escalation
+                      </span>
+                      <span className="opt" onClick={() => console.log('Credits')}>
+                        Credits
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
