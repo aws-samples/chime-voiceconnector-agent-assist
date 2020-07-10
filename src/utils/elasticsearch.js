@@ -107,35 +107,33 @@ export function retrieveTranscriptForTransactionId(transactionId) {
 
 export function queryCall(keyword) {
   return Promise.all([queryTranscriptKeyword(keyword), queryMetadataForKeyword(keyword)]).then(results => {
-      // First step: find transaction id of the call that is correlated to the keyword.
       const transcriptionPromises = results[0], metadataPromises = results[1];
       return Promise.all([keyword,
-        transcriptionPromises.map(d => {
+        Promise.all(transcriptionPromises.map(d => {
           return queryMetadataForKeyword(d.TransactionId).then(metadata => {
-            // Metadata should correlate with only one transactionId.
             if (metadata.length === 1) {
               return metadata[0];
             }
           });
-        }),
+        })
+        ),
         metadataPromises
       ]);
     }).then(promise => {
-      // Second step: extract data for frontend.
-      const metadata = [...promise[1], ...promise[2]]
+      const metadata = [...promise[1], ...promise[2]];
       const result = metadata.map(d => {
-        const fromNumber = (d.fromNumber !== undefined || d.fromNumber !== null) ? d.fromNumber : "Unknown";
+        const fromNumber = (d.fromNumber !== undefined && d.fromNumber !== null) ? d.fromNumber : "Unknown";
         return {
           TransactionId: d.transactionId,
           Direction: d.direction,
           StartTimeEpochSeconds: Math.ceil(new Date(d.startTime) / 1000),
           EndTimeEpochSeconds: Math.ceil(new Date(d.endTime) / 1000),
           SourcePhoneNumber: fromNumber,
-        }
+        };
       });
 
       return new Promise(resolve => resolve(result));
-    })
+    });
 }
 
 function queryMetadataForKeyword(keyword) {
