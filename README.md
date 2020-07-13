@@ -1,5 +1,10 @@
 # AI-powered Speech Analytics with Amazon Chime Voice Connector
 
+[![GitHub stars](https://img.shields.io/github/stars/aws-samples/chime-voiceconnector-agent-assist?style=flat-square)](https://github.com/aws-samples/chime-voiceconnector-agent-assist/stargazers)
+![GitHub contributors](https://img.shields.io/github/contributors/aws-samples/chime-voiceconnector-agent-assist?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/aws-samples/chime-voiceconnector-agent-assist?style=flat-square)
+
+
 Making it easy to get started with Amazon Chime Voice Connector live audio streaming to build a AI-powered Speech Analytics using Amazon Transcribe, Amazon Comprehend and AWS Elastic Search. This example builds on top of previously released [Real-time transcription with Amazon Chime Voice Connecter](https://github.com/aws-samples/amazon-chime-voiceconnector-transcription) and create a solution to help care site agents in their typical workflows.
 
 ## On this Page
