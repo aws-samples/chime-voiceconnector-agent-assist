@@ -39,7 +39,7 @@
                                     },
                                     "-",
                                     {
-                                        "Ref": "env"
+                                        "Ref": "AWS::AccountId"
                                     }
                                 ]
                             ]
