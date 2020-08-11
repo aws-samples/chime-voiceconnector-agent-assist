@@ -64,7 +64,7 @@ EOF
 echo "Trying to get your account number from environment credential..."
 aws sts get-caller-identity && ACCOUNT=$(aws sts get-caller-identity | jq -r ".Account") || (echo "Failed to get your account, please enter your AWS account number" && read $ACCOUNT)
 
-S3_BUCKET_NAME=source-us-east-1-$ACCOUNT
+S3_BUCKET_NAME=source-agent-assist-us-east-1-$ACCOUNT
 ROOT_DIR=$(pwd)
 INFRASTRUCTURE_DIR=$ROOT_DIR/infrastructure
 
