@@ -96,7 +96,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs10.x",
+        "Runtime": "nodejs14.x",
         "Timeout": "300"
       },
       "Type": "AWS::Lambda::Function"
@@ -191,7 +191,7 @@
 						"Arn"
 					]
 				},
-				"Runtime": "nodejs10.x",
+				"Runtime": "nodejs14.x",
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-chime-vc-agentassist-zhizhk-94343-deployment",
