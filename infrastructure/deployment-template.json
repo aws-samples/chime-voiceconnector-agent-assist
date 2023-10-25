@@ -280,7 +280,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 3,
         "Events": {
             "CWEvent": {
@@ -340,7 +340,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 3,
         "FunctionName": "chime-s3-audio-streaming"
       },
@@ -370,7 +370,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 3
       },
       "Type": "AWS::Serverless::Function"
@@ -398,7 +398,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 3,
         "Events": {
             "CWEvent": {
